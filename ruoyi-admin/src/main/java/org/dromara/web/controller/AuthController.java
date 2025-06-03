@@ -1,7 +1,6 @@
 package org.dromara.web.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.dev33.satoken.context.mock.SaTokenContextMockUtil;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.codec.Base64;
@@ -95,13 +94,10 @@ public class AuthController {
 
         Long userId = LoginHelper.getUserId();
         scheduledExecutorService.schedule(() -> {
-            SaTokenContextMockUtil.setMockContext(() -> {
-                StpUtil.setTokenValueToStorage(loginVo.getAccessToken());
-                SseMessageDto dto = new SseMessageDto();
-                dto.setMessage("欢迎登录RuoYi-Vue-Plus后台管理系统");
-                dto.setUserIds(List.of(userId));
-                SseMessageUtils.publishMessage(dto);
-            });
+            SseMessageDto dto = new SseMessageDto();
+            dto.setMessage("欢迎登录RuoYi-Vue-Plus后台管理系统");
+            dto.setUserIds(List.of(userId));
+            SseMessageUtils.publishMessage(dto);
         }, 5, TimeUnit.SECONDS);
         return R.ok(loginVo);
     }
