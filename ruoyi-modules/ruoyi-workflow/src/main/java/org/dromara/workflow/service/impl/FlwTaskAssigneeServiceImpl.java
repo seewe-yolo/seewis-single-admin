@@ -233,7 +233,7 @@ public class FlwTaskAssigneeServiceImpl implements IFlwTaskAssigneeService, Hand
         }
         // 跳过以 $ 或 # 开头的字符串
         if (StringUtils.startsWith(storageId, "$") || StringUtils.startsWith(storageId, "#")) {
-            log.info("跳过 storageId 解析，检测到内置变量表达式：{}", storageId);
+            log.debug("跳过 storageId 解析，检测到内置变量表达式：{}", storageId);
             return null;
         }
         try {
