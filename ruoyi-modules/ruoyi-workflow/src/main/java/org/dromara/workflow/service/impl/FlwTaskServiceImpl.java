@@ -530,7 +530,10 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
             // 构建以下节点数据
             List<Task> buildNextTaskList = StreamUtils.toList(nextNodeList, node -> taskService.addTask(node, instance, definition, FlowParams.build()));
             // 办理人变量替换
-            ExpressionUtil.evalVariable(buildNextTaskList, mergeVariable);
+            ExpressionUtil.evalVariable(buildNextTaskList,
+                FlowParams.build()
+                    .variable(mergeVariable)
+            );
             for (FlowNode flowNode : nextFlowNodes) {
                 buildNextTaskList.stream().filter(t -> t.getNodeCode().equals(flowNode.getNodeCode())).findFirst().ifPresent(t -> {
                     if (CollUtil.isNotEmpty(t.getPermissionList())) {

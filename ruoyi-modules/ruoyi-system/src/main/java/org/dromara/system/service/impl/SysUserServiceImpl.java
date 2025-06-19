@@ -623,6 +623,23 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     }
 
     /**
+     * 通过用户ID查询用户详细信息
+     *
+     * @param userId 用户id
+     * @return 用户详细信息
+     */
+    @Override
+    public UserDTO selectUserDtoById(Long userId) {
+        SysUser sysUser = baseMapper.selectOne(new LambdaQueryWrapper<SysUser>()
+            .select(SysUser::getUserId, SysUser::getDeptId, SysUser::getUserName,
+                SysUser::getNickName, SysUser::getUserType, SysUser::getEmail,
+                SysUser::getPhonenumber, SysUser::getSex, SysUser::getStatus,
+                SysUser::getCreateTime)
+            .eq(SysUser::getUserId, userId));
+        return BeanUtil.toBean(sysUser, UserDTO.class);
+    }
+
+    /**
      * 通过用户ID查询用户列表
      *
      * @param userIds 用户ids
@@ -634,7 +651,10 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
             return List.of();
         }
         List<SysUserVo> list = baseMapper.selectVoList(new LambdaQueryWrapper<SysUser>()
-            .select(SysUser::getUserId, SysUser::getUserName, SysUser::getNickName, SysUser::getEmail, SysUser::getPhonenumber)
+            .select(SysUser::getUserId, SysUser::getDeptId, SysUser::getUserName,
+                SysUser::getNickName, SysUser::getUserType, SysUser::getEmail,
+                SysUser::getPhonenumber, SysUser::getSex, SysUser::getStatus,
+                SysUser::getCreateTime)
             .eq(SysUser::getStatus, SystemConstants.NORMAL)
             .in(SysUser::getUserId, userIds));
         return BeanUtil.copyToList(list, UserDTO.class);
@@ -675,7 +695,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         // 获取用户ID列表
         Set<Long> userIds = StreamUtils.toSet(userRoles, SysUserRole::getUserId);
 
-        return selectListByIds(new ArrayList<>(userIds));
+        return this.selectListByIds(new ArrayList<>(userIds));
     }
 
     /**
@@ -715,7 +735,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         // 获取用户ID列表
         Set<Long> userIds = StreamUtils.toSet(userPosts, SysUserPost::getUserId);
 
-        return selectListByIds(new ArrayList<>(userIds));
+        return this.selectListByIds(new ArrayList<>(userIds));
     }
 
     /**
