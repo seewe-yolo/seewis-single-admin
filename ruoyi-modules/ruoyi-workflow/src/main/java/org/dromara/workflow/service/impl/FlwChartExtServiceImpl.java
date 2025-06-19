@@ -10,6 +10,7 @@ import org.dromara.common.core.domain.dto.UserDTO;
 import org.dromara.common.core.service.DeptService;
 import org.dromara.common.core.service.UserService;
 import org.dromara.common.core.utils.DateUtils;
+import org.dromara.common.core.utils.ServletUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.warm.flow.core.dto.DefJson;
 import org.dromara.warm.flow.core.dto.NodeJson;
@@ -48,8 +49,9 @@ public class FlwChartExtServiceImpl implements ChartExtService {
      */
     @Override
     public void execute(DefJson defJson) {
-        // TODO: 后续版本将通过参数传入流程实例ID，这里先写死测试用
-        Long instanceId = 1935591874325151746L;
+        // 临时修复 后续版本将通过defjson获取流程实例ID
+        String[] parts = ServletUtils.getRequest().getRequestURI().split("/");
+        Long instanceId = Long.valueOf(parts[parts.length - 1]);
 
         // 根据流程实例ID查询所有相关的历史任务列表
         List<FlowHisTask> flowHisTasks = this.getHisTaskGroupedByNode(instanceId);
