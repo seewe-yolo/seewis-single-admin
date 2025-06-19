@@ -48,15 +48,38 @@ public class FlwChartExtServiceImpl implements ChartExtService {
      */
     @Override
     public void execute(DefJson defJson) {
-        //TODO 等待下一版本更新传递 流程实例id
+        // TODO: 后续版本将通过参数传入流程实例ID，这里先写死测试用
         Long instanceId = 1935591874325151746L;
-        // 按 nodeCode 分组的历史任务列表
-        Map<String, List<FlowHisTask>> groupedByNode = this.getHisTaskGroupedByNode(instanceId);
 
-        // 遍历每个节点，处理扩展提示内容
+        // 根据流程实例ID查询所有相关的历史任务列表
+        List<FlowHisTask> flowHisTasks = this.getHisTaskGroupedByNode(instanceId);
+        if (CollUtil.isEmpty(flowHisTasks)) {
+            return;
+        }
+
+        // 按节点编号（nodeCode）对历史任务进行分组
+        Map<String, List<FlowHisTask>> groupedByNode = flowHisTasks.stream()
+            .collect(Collectors.groupingBy(FlowHisTask::getNodeCode));
+
+        // 批量查询所有审批人的用户信息
+        List<UserDTO> userDTOList = userService.selectListByIds(
+            flowHisTasks.stream()
+                .map(task -> Long.valueOf(task.getApprover()))
+                .distinct()
+                .collect(Collectors.toList())
+        );
+
+        // 将查询到的用户列表转换为以用户ID为key的映射
+        Map<Long, UserDTO> userMap = userDTOList.stream()
+            .collect(Collectors.toMap(UserDTO::getUserId, user -> user));
+
+        // 遍历流程定义中的每个节点，调用处理方法，将对应节点的任务列表及用户信息传入，生成扩展提示内容
         for (NodeJson nodeJson : defJson.getNodeList()) {
+            // 获取当前节点对应的历史任务列表，如果没有则返回空列表避免空指针
             List<FlowHisTask> taskList = groupedByNode.getOrDefault(nodeJson.getNodeCode(), Collections.emptyList());
-            this.processNodeExtInfo(nodeJson, taskList);
+
+            // 处理当前节点的扩展信息，包括构建审批人提示内容等
+            this.processNodeExtInfo(nodeJson, taskList, userMap);
         }
     }
 
@@ -98,17 +121,10 @@ public class FlwChartExtServiceImpl implements ChartExtService {
      * @param nodeJson 当前节点对象
      * @param taskList 当前节点对应的历史审批任务列表
      */
-    private void processNodeExtInfo(NodeJson nodeJson, List<FlowHisTask> taskList) {
+    private void processNodeExtInfo(NodeJson nodeJson, List<FlowHisTask> taskList, Map<Long, UserDTO> userMap) {
         if (CollUtil.isEmpty(taskList)) {
             return;
         }
-
-        // 根据 taskList 中的 approver ID 查询用户，并构建 userId -> UserDTO 的映射表
-        Map<Long, UserDTO> userMap = userService.selectListByIds(
-            taskList.stream()
-                .map(task -> Long.valueOf(task.getApprover()))
-                .collect(Collectors.toList())
-        ).stream().collect(Collectors.toMap(UserDTO::getUserId, user -> user));
 
         // 获取节点提示内容对象中的 info 列表，用于追加提示项
         List<PromptContent.InfoItem> info = nodeJson.getPromptContent().getInfo();
@@ -194,18 +210,17 @@ public class FlwChartExtServiceImpl implements ChartExtService {
     }
 
     /**
-     * 根据流程实例ID获取按节点编号分组的历史任务列表
+     * 根据流程实例ID获取历史任务列表
      *
      * @param instanceId 流程实例ID
-     * @return Map<节点编码, 对应的历史任务列表>
+     * @return 历史任务列表
      */
-    public Map<String, List<FlowHisTask>> getHisTaskGroupedByNode(Long instanceId) {
+    public List<FlowHisTask> getHisTaskGroupedByNode(Long instanceId) {
         LambdaQueryWrapper<FlowHisTask> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(FlowHisTask::getInstanceId, instanceId)
             .eq(FlowHisTask::getNodeType, NodeType.BETWEEN.getKey())
             .orderByDesc(FlowHisTask::getCreateTime, FlowHisTask::getUpdateTime);
-        List<FlowHisTask> flowHisTasks = flowHisTaskMapper.selectList(wrapper);
-        return flowHisTasks.stream().collect(Collectors.groupingBy(FlowHisTask::getNodeCode));
+        return flowHisTaskMapper.selectList(wrapper);
     }
 
 }
