@@ -10,6 +10,7 @@ import org.dromara.common.core.domain.dto.UserDTO;
 import org.dromara.common.core.service.DeptService;
 import org.dromara.common.core.service.UserService;
 import org.dromara.common.core.utils.DateUtils;
+import org.dromara.common.core.utils.StringUtils;
 import org.dromara.warm.flow.core.dto.DefJson;
 import org.dromara.warm.flow.core.dto.NodeJson;
 import org.dromara.warm.flow.core.dto.PromptContent;
@@ -35,58 +36,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class FlwChartExtServiceImpl implements ChartExtService {
-
-    /**
-     * 悬浮窗整体样式（支持滚动）
-     */
-    public static final Map<String, Object> DIALOG_STYLE = Map.ofEntries(
-        Map.entry("position", "absolute"),
-        Map.entry("backgroundColor", "#fff"),
-        Map.entry("border", "1px solid #ccc"),
-        Map.entry("borderRadius", "4px"),
-        Map.entry("boxShadow", "0 2px 8px rgba(0, 0, 0, 0.15)"),
-        Map.entry("padding", "8px 12px"),
-        Map.entry("fontSize", "14px"),
-        Map.entry("zIndex", 1000),
-        Map.entry("maxWidth", "500px"),
-        // 取消 maxHeight，让高度自适应
-        Map.entry("overflowY", "visible"),
-        Map.entry("overflowX", "hidden"),
-        Map.entry("color", "#333"),
-        Map.entry("pointerEvents", "auto"),
-        Map.entry("scrollbarWidth", "thin")
-    );
-    public static final Map<String, Object> PREFIX_STYLE = Map.of(
-        "textAlign", "right",
-        "color", "#444",
-        "userSelect", "none",
-        "display", "inline-block",
-        "width", "100px",
-        "paddingRight", "8px",
-        "fontWeight", "500",
-        "fontSize", "14px",
-        "lineHeight", "24px",
-        "verticalAlign", "middle"
-    );
-    public static final Map<String, Object> CONTENT_STYLE = Map.of(
-        "backgroundColor", "#f7faff",
-        "color", "#005cbf",
-        "padding", "4px 8px",
-        "fontSize", "14px",
-        "borderRadius", "4px",
-        "whiteSpace", "normal",
-        "border", "1px solid #d0e5ff",
-        "userSelect", "text",
-        "lineHeight", "20px"
-    );
-    public static final Map<String, Object> ROW_STYLE = Map.of(
-        "color", "#222",
-        "alignItems", "center",
-        "display", "flex",
-        "marginBottom", "6px",
-        "fontWeight", "400",
-        "fontSize", "14px"
-    );
 
     private final UserService userService;
     private final DeptService deptService;
@@ -120,38 +69,75 @@ public class FlwChartExtServiceImpl implements ChartExtService {
     public void initPromptContent(DefJson defJson) {
         ChartExtService.super.initPromptContent(defJson);
         // 为每个节点设置统一的提示框样式
-        defJson.getNodeList().forEach(nodeJson -> nodeJson.getPromptContent().setDialogStyle(DIALOG_STYLE));
+        defJson.getNodeList().forEach(nodeJson ->
+            nodeJson.getPromptContent()
+                .setDialogStyle(
+                    Map.ofEntries(
+                        Map.entry("position", "absolute"),
+                        Map.entry("backgroundColor", "#fff"),
+                        Map.entry("border", "1px solid #ccc"),
+                        Map.entry("borderRadius", "4px"),
+                        Map.entry("boxShadow", "0 2px 8px rgba(0, 0, 0, 0.15)"),
+                        Map.entry("padding", "8px 12px"),
+                        Map.entry("fontSize", "14px"),
+                        Map.entry("zIndex", 1000),
+                        Map.entry("maxWidth", "500px"),
+                        Map.entry("overflowY", "visible"),
+                        Map.entry("overflowX", "hidden"),
+                        Map.entry("color", "#333"),
+                        Map.entry("pointerEvents", "auto"),
+                        Map.entry("scrollbarWidth", "thin")
+                    )
+                )
+        );
     }
 
     /**
-     * 处理每个节点的扩展信息，生成提示内容
+     * 处理节点的扩展信息，构建用于流程图悬浮提示的内容
      *
-     * @param nodeJson 当前节点
+     * @param nodeJson 当前节点对象
+     * @param taskList 当前节点对应的历史审批任务列表
      */
     private void processNodeExtInfo(NodeJson nodeJson, List<FlowHisTask> taskList) {
         if (CollUtil.isEmpty(taskList)) {
             return;
         }
+
+        // 根据 taskList 中的 approver ID 查询用户，并构建 userId -> UserDTO 的映射表
+        Map<Long, UserDTO> userMap = userService.selectListByIds(
+            taskList.stream()
+                .map(task -> Long.valueOf(task.getApprover()))
+                .collect(Collectors.toList())
+        ).stream().collect(Collectors.toMap(UserDTO::getUserId, user -> user));
+
+        // 获取节点提示内容对象中的 info 列表，用于追加提示项
         List<PromptContent.InfoItem> info = nodeJson.getPromptContent().getInfo();
+
+        // 遍历所有任务记录，构建提示内容
         for (FlowHisTask task : taskList) {
-            UserDTO userDTO = userService.selectUserDtoById(Long.valueOf(task.getApprover()));
+            UserDTO userDTO = userMap.get(Long.valueOf(task.getApprover()));
             if (ObjectUtil.isEmpty(userDTO)) {
                 return;
             }
-            String deptName = deptService.selectDeptNameByIds(String.valueOf(userDTO.getDeptId()));
-            String displayName = String.format("👤 %s（%s）", userDTO.getNickName(), deptName);
 
+            // 查询用户所属部门名称
+            String deptName = deptService.selectDeptNameByIds(String.valueOf(userDTO.getDeptId()));
+
+            // 添加标题项，如：👤 张三（市场部）
             info.add(new PromptContent.InfoItem()
-                .setPrefix(displayName)
+                .setPrefix(StringUtils.format("👥 {}（{}）", userDTO.getNickName(), deptName))
                 .setPrefixStyle(Map.of(
                     "fontWeight", "bold",
                     "fontSize", "15px",
                     "color", "#333"
                 ))
-                .setContent("")
-                .setContentStyle(Collections.emptyMap())
-                .setRowStyle(Map.of("margin", "8px 0", "borderBottom", "1px dashed #ccc"))
+                .setRowStyle(Map.of(
+                    "margin", "8px 0",
+                    "borderBottom", "1px dashed #ccc"
+                ))
             );
+
+            // 添加具体信息项：账号、耗时、时间
             info.add(buildInfoItem("用户账号", userDTO.getUserName()));
             info.add(buildInfoItem("审批耗时", DateUtils.getTimeDifference(task.getUpdateTime(), task.getCreateTime())));
             info.add(buildInfoItem("办理时间", DateUtils.formatDateTime(task.getUpdateTime())));
@@ -167,11 +153,44 @@ public class FlwChartExtServiceImpl implements ChartExtService {
      */
     private PromptContent.InfoItem buildInfoItem(String key, String value) {
         return new PromptContent.InfoItem()
+            // 前缀
             .setPrefix(key + ": ")
-            .setPrefixStyle(PREFIX_STYLE)
+            // 前缀样式
+            .setPrefixStyle(Map.of(
+                "textAlign", "right",
+                "color", "#444",
+                "userSelect", "none",
+                "display", "inline-block",
+                "width", "100px",
+                "paddingRight", "8px",
+                "fontWeight", "500",
+                "fontSize", "14px",
+                "lineHeight", "24px",
+                "verticalAlign", "middle"
+            ))
+            // 内容
             .setContent(value)
-            .setContentStyle(CONTENT_STYLE)
-            .setRowStyle(ROW_STYLE);
+            // 内容样式
+            .setContentStyle(Map.of(
+                "backgroundColor", "#f7faff",
+                "color", "#005cbf",
+                "padding", "4px 8px",
+                "fontSize", "14px",
+                "borderRadius", "4px",
+                "whiteSpace", "normal",
+                "border", "1px solid #d0e5ff",
+                "userSelect", "text",
+                "lineHeight", "20px"
+            ))
+            // 行样式
+            .setRowStyle(Map.of(
+                "color", "#222",
+                "alignItems", "center",
+                "display", "flex",
+                "marginBottom", "6px",
+                "fontWeight", "400",
+                "fontSize", "14px"
+            ));
     }
 
     /**
@@ -182,13 +201,11 @@ public class FlwChartExtServiceImpl implements ChartExtService {
      */
     public Map<String, List<FlowHisTask>> getHisTaskGroupedByNode(Long instanceId) {
         LambdaQueryWrapper<FlowHisTask> wrapper = Wrappers.lambdaQuery();
-        wrapper.eq(FlowHisTask::getInstanceId, instanceId);
-        wrapper.eq(FlowHisTask::getNodeType, NodeType.BETWEEN.getKey());
-        wrapper.orderByDesc(FlowHisTask::getCreateTime).orderByDesc(FlowHisTask::getUpdateTime);
+        wrapper.eq(FlowHisTask::getInstanceId, instanceId)
+            .eq(FlowHisTask::getNodeType, NodeType.BETWEEN.getKey())
+            .orderByDesc(FlowHisTask::getCreateTime, FlowHisTask::getUpdateTime);
         List<FlowHisTask> flowHisTasks = flowHisTaskMapper.selectList(wrapper);
-
-        return flowHisTasks.stream()
-            .collect(Collectors.groupingBy(FlowHisTask::getNodeCode));
+        return flowHisTasks.stream().collect(Collectors.groupingBy(FlowHisTask::getNodeCode));
     }
 
 }
