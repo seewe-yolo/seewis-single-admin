@@ -53,14 +53,6 @@ public interface UserService {
     String selectEmailById(Long userId);
 
     /**
-     * 通过用户ID查询用户详细信息
-     *
-     * @param userId 用户id
-     * @return 用户详细信息
-     */
-    UserDTO selectUserDtoById(Long userId);
-
-    /**
      * 通过用户ID查询用户列表
      *
      * @param userIds 用户ids
