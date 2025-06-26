@@ -49,15 +49,16 @@ public class DataWriteHandler implements SheetWriteHandler, CellWriteHandler {
         if (CollUtil.isEmpty(notationMap) && CollUtil.isEmpty(headColumnMap)) {
             return;
         }
+        // 第一行
         WriteCellData<?> cellData = context.getFirstCellData();
+        // 第一个格子
         WriteCellStyle writeCellStyle = cellData.getOrCreateStyle();
 
-        DataFormatData dataFormatData = new DataFormatData();
-        // 单元格设置为文本格式
-        dataFormatData.setIndex((short) 49);
-        writeCellStyle.setDataFormatData(dataFormatData);
-
         if (context.getHead()) {
+            DataFormatData dataFormatData = new DataFormatData();
+            // 单元格设置为文本格式
+            dataFormatData.setIndex((short) 49);
+            writeCellStyle.setDataFormatData(dataFormatData);
             Cell cell = context.getCell();
             WriteSheetHolder writeSheetHolder = context.getWriteSheetHolder();
             Sheet sheet = writeSheetHolder.getSheet();

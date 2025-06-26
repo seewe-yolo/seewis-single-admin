@@ -2,6 +2,7 @@ package org.dromara.demo.domain.vo;
 
 import cn.idev.excel.annotation.ExcelIgnoreUnannotated;
 import cn.idev.excel.annotation.ExcelProperty;
+import cn.idev.excel.annotation.format.DateTimeFormat;
 import org.dromara.common.excel.annotation.ExcelNotation;
 import org.dromara.common.excel.annotation.ExcelRequired;
 import org.dromara.common.translation.annotation.Translation;
@@ -73,6 +74,8 @@ public class TestDemoVo implements Serializable {
     /**
      * 创建时间
      */
+    @ExcelRequired
+    @DateTimeFormat("yyyy-MM-dd HH:mm:ss")
     @ExcelProperty(value = "创建时间")
     private Date createTime;
 
