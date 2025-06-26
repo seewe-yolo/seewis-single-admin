@@ -13,6 +13,7 @@ import org.dromara.common.mybatis.helper.DataBaseHelper;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.warm.flow.core.service.DefService;
 import org.dromara.warm.flow.orm.entity.FlowDefinition;
+import org.dromara.warm.flow.ui.service.CategoryService;
 import org.dromara.workflow.common.ConditionalOnEnable;
 import org.dromara.workflow.common.constant.FlowConstant;
 import org.dromara.workflow.domain.FlowCategory;
@@ -35,7 +36,7 @@ import java.util.List;
 @ConditionalOnEnable
 @RequiredArgsConstructor
 @Service
-public class FlwCategoryServiceImpl implements IFlwCategoryService {
+public class FlwCategoryServiceImpl implements IFlwCategoryService, CategoryService {
 
     private final DefService defService;
     private final FlwCategoryMapper baseMapper;
@@ -102,20 +103,35 @@ public class FlwCategoryServiceImpl implements IFlwCategoryService {
         }
         // 获取当前列表中每一个节点的parentId，然后在列表中查找是否有id与其parentId对应，若无对应，则表明此时节点列表中，该节点在当前列表中属于顶级节点
         List<Tree<String>> treeList = CollUtil.newArrayList();
-        for (FlowCategoryVo d : categorys) {
-            String parentId = d.getParentId().toString();
+        for (FlowCategoryVo current : categorys) {
+            String parentId = current.getParentId().toString();
             FlowCategoryVo categoryVo = StreamUtils.findFirst(categorys, it -> it.getCategoryId().toString().equals(parentId));
             if (ObjectUtil.isNull(categoryVo)) {
-                List<Tree<String>> trees = TreeBuildUtils.build(categorys, parentId, (dept, tree) ->
-                    tree.setId(dept.getCategoryId().toString())
-                        .setParentId(dept.getParentId().toString())
-                        .setName(dept.getCategoryName())
-                        .setWeight(dept.getOrderNum()));
-                Tree<String> tree = StreamUtils.findFirst(trees, it -> it.getId().equals(d.getCategoryId().toString()));
+                List<Tree<String>> trees = TreeBuildUtils.build(categorys, parentId, (node, tree) ->
+                        tree.setId(node.getCategoryId().toString())
+                                .setParentId(node.getParentId().toString())
+                                .setName(node.getCategoryName())
+                                .setWeight(node.getOrderNum()));
+                Tree<String> tree = StreamUtils.findFirst(trees, it -> it.getId().equals(current.getCategoryId().toString()));
                 treeList.add(tree);
             }
         }
         return treeList;
+    }
+
+    /**
+     * 工作流查询分类
+     *
+     * @return 分类树结构列表
+     */
+    @Override
+    public List<org.dromara.warm.flow.core.dto.Tree> queryCategory() {
+        List<FlowCategoryVo> list = this.queryList(new FlowCategoryBo());
+        return StreamUtils.toList(list, category -> new org.dromara.warm.flow.core.dto.Tree()
+                .setId(String.valueOf(category.getCategoryId()))
+                .setName(category.getCategoryName())
+                .setParentId(String.valueOf(category.getParentId()))
+        );
     }
 
     /**

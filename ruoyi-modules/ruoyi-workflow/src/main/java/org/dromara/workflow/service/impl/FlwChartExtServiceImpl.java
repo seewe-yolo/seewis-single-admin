@@ -12,7 +12,6 @@ import org.dromara.common.core.service.DeptService;
 import org.dromara.common.core.service.DictService;
 import org.dromara.common.core.service.UserService;
 import org.dromara.common.core.utils.DateUtils;
-import org.dromara.common.core.utils.ServletUtils;
 import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.warm.flow.core.dto.DefJson;
@@ -53,12 +52,8 @@ public class FlwChartExtServiceImpl implements ChartExtService {
      */
     @Override
     public void execute(DefJson defJson) {
-        // 临时修复 后续版本将通过defjson获取流程实例ID
-        String[] parts = ServletUtils.getRequest().getRequestURI().split("/");
-        Long instanceId = Convert.toLong(parts[parts.length - 1]);
-
         // 根据流程实例ID查询所有相关的历史任务列表
-        List<FlowHisTask> flowHisTasks = this.getHisTaskGroupedByNode(instanceId);
+        List<FlowHisTask> flowHisTasks = this.getHisTaskGroupedByNode(defJson.getInstance().getId());
         if (CollUtil.isEmpty(flowHisTasks)) {
             return;
         }
@@ -74,14 +69,12 @@ public class FlwChartExtServiceImpl implements ChartExtService {
 
         Map<String, String> dictType = dictService.getAllDictByDictType(FlowConstant.WF_TASK_STATUS);
 
-        // 遍历流程定义中的每个节点，调用处理方法，将对应节点的任务列表及用户信息传入，生成扩展提示内容
         for (NodeJson nodeJson : defJson.getNodeList()) {
-            // 获取当前节点对应的历史任务列表，如果没有则返回空列表避免空指针
             List<FlowHisTask> taskList = groupedByNode.get(nodeJson.getNodeCode());
             if (CollUtil.isEmpty(taskList)) {
                 continue;
             }
-            // 处理当前节点的扩展信息，包括构建审批人提示内容等
+            // 处理当前节点的扩展信息
             this.processNodeExtInfo(nodeJson, taskList, userMap, dictType);
         }
     }
@@ -96,44 +89,44 @@ public class FlwChartExtServiceImpl implements ChartExtService {
         defJson.setTopText("流程名称: " + defJson.getFlowName());
         defJson.getNodeList().forEach(nodeJson -> {
             nodeJson.setPromptContent(
-                new PromptContent()
-                    // 提示信息
-                    .setInfo(
-                        CollUtil.newArrayList(
-                            new PromptContent.InfoItem()
-                                .setPrefix("任务名称: ")
-                                .setContent(nodeJson.getNodeName())
-                                .setContentStyle(Map.of(
-                                    "border", "1px solid #d1e9ff",
-                                    "backgroundColor", "#e8f4ff",
-                                    "padding", "4px 8px",
-                                    "borderRadius", "4px"
-                                ))
-                                .setRowStyle(Map.of(
-                                    "fontWeight", "bold",
-                                    "margin", "0 0 6px 0",
-                                    "padding", "0 0 8px 0",
-                                    "borderBottom", "1px solid #ccc"
-                                ))
-                        )
-                    )
-                    // 弹窗样式
-                    .setDialogStyle(MapUtil.mergeAll(
-                        "position", "absolute",
-                        "backgroundColor", "#fff",
-                        "border", "1px solid #ccc",
-                        "borderRadius", "4px",
-                        "boxShadow", "0 2px 8px rgba(0, 0, 0, 0.15)",
-                        "padding", "8px 12px",
-                        "fontSize", "14px",
-                        "zIndex", "1000",
-                        "maxWidth", "500px",
-                        "overflowY", "visible",
-                        "overflowX", "hidden",
-                        "color", "#333",
-                        "pointerEvents", "auto",
-                        "scrollbarWidth", "thin"
-                    ))
+                    new PromptContent()
+                            // 提示信息主体内容样式
+                            .setInfo(
+                                    CollUtil.newArrayList(
+                                            new PromptContent.InfoItem()
+                                                    .setPrefix("任务名称: ")
+                                                    .setContent(nodeJson.getNodeName())
+                                                    .setContentStyle(Map.of(
+                                                            "border", "1px solid #d1e9ff",
+                                                            "backgroundColor", "#e8f4ff",
+                                                            "padding", "4px 8px",
+                                                            "borderRadius", "4px"
+                                                    ))
+                                                    .setRowStyle(Map.of(
+                                                            "fontWeight", "bold",
+                                                            "margin", "0 0 6px 0",
+                                                            "padding", "0 0 8px 0",
+                                                            "borderBottom", "1px solid #ccc"
+                                                    ))
+                                    ))
+                            // 弹窗容器样式（包含滚动条设置）
+                            .setDialogStyle(MapUtil.mergeAll(
+                                    "position", "absolute",
+                                    "backgroundColor", "#fff",
+                                    "border", "1px solid #ccc",
+                                    "borderRadius", "4px",
+                                    "boxShadow", "0 2px 8px rgba(0, 0, 0, 0.15)",
+                                    "padding", "8px 12px",
+                                    "fontSize", "14px",
+                                    "zIndex", "1000",
+                                    "maxWidth", "500px",
+                                    "maxHeight", "300px",    // 设置最大高度，超过触发滚动
+                                    "overflowY", "auto",     // 允许垂直滚动
+                                    "overflowX", "hidden",   // 禁止横向滚动
+                                    "color", "#333",
+                                    "pointerEvents", "auto",
+                                    "scrollbarWidth", "thin" // 滚动条宽度细化（部分浏览器支持）
+                            ))
             );
         });
     }
