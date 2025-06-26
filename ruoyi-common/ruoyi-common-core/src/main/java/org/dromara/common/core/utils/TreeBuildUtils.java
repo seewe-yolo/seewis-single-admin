@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import org.dromara.common.core.utils.reflect.ReflectUtils;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -79,17 +78,10 @@ public class TreeBuildUtils extends TreeUtil {
             return CollUtil.newArrayList();
         }
 
-        // 提取所有节点 ID，用于后续判断哪些节点为根节点（即 parentId 不在其中）
-        Set<K> allIds = StreamUtils.toSet(list, getId);
+        Set<K> rootParentIds = StreamUtils.toSet(list, getParentId);
+        rootParentIds.removeAll(StreamUtils.toSet(list, getId));
 
-        // 筛选出所有 parentId 不在 allIds 中的节点，这些节点的 parentId 可认为是根节点
-        Set<K> rootParentIds = list.stream()
-            .map(getParentId)
-            .filter(Objects::nonNull)
-            .filter(pid -> !allIds.contains(pid))
-            .collect(Collectors.toSet());
-
-        // 使用流处理，遍历每个顶级 parentId，构建对应树，并合并为一个列表返回
+        // 构建每一个根 parentId 下的树，并合并成最终结果列表
         return rootParentIds.stream()
             .flatMap(rootParentId -> TreeUtil.build(list, rootParentId, parser).stream())
             .collect(Collectors.toList());

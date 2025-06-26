@@ -8,7 +8,10 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.exception.ServiceException;
-import org.dromara.common.core.utils.*;
+import org.dromara.common.core.utils.MapstructUtils;
+import org.dromara.common.core.utils.ObjectUtils;
+import org.dromara.common.core.utils.StringUtils;
+import org.dromara.common.core.utils.TreeBuildUtils;
 import org.dromara.common.mybatis.helper.DataBaseHelper;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.warm.flow.core.service.DefService;
@@ -48,14 +51,7 @@ public class FlwCategoryServiceImpl implements IFlwCategoryService {
      */
     @Override
     public FlowCategoryVo queryById(Long categoryId) {
-        FlowCategoryVo category = baseMapper.selectVoById(categoryId);
-        if (ObjectUtil.isNull(category)) {
-            return null;
-        }
-        FlowCategoryVo parentCategory = baseMapper.selectVoOne(new LambdaQueryWrapper<FlowCategory>()
-            .select(FlowCategory::getCategoryName).eq(FlowCategory::getCategoryId, category.getParentId()));
-        category.setParentName(ObjectUtils.notNullGetter(parentCategory, FlowCategoryVo::getCategoryName));
-        return category;
+        return baseMapper.selectVoById(categoryId);
     }
 
     /**
