@@ -12,9 +12,7 @@ import org.dromara.common.core.domain.dto.TaskAssigneeDTO;
 import org.dromara.common.core.domain.dto.UserDTO;
 import org.dromara.common.core.domain.model.TaskAssigneeBody;
 import org.dromara.common.core.enums.FormatsType;
-import org.dromara.common.core.service.DeptService;
-import org.dromara.common.core.service.TaskAssigneeService;
-import org.dromara.common.core.service.UserService;
+import org.dromara.common.core.service.*;
 import org.dromara.common.core.utils.DateUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.warm.flow.ui.dto.HandlerFunDto;
@@ -45,6 +43,8 @@ public class FlwTaskAssigneeServiceImpl implements IFlwTaskAssigneeService, Hand
     private final TaskAssigneeService taskAssigneeService;
     private final UserService userService;
     private final DeptService deptService;
+    private final RoleService roleService;
+    private final PostService postService;
 
     /**
      * 获取办理人权限设置列表tabs页签
@@ -216,9 +216,9 @@ public class FlwTaskAssigneeServiceImpl implements IFlwTaskAssigneeService, Hand
     private Map<Long, String> getNamesByType(TaskAssigneeEnum type, List<Long> ids) {
         return switch (type) {
             case USER -> userService.selectUserNamesByIds(ids);
-            case ROLE -> userService.selectRoleNamesByIds(ids);
-            case DEPT -> userService.selectDeptNamesByIds(ids);
-            case POST -> userService.selectPostNamesByIds(ids);
+            case ROLE -> roleService.selectRoleNamesByIds(ids);
+            case DEPT -> deptService.selectDeptNamesByIds(ids);
+            case POST -> postService.selectPostNamesByIds(ids);
         };
     }
 
