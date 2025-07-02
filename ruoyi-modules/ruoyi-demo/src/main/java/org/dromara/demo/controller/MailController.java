@@ -1,6 +1,5 @@
 package org.dromara.demo.controller;
 
-import cn.dev33.satoken.annotation.SaIgnore;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.domain.R;
 import org.dromara.common.mail.utils.MailUtils;
@@ -18,7 +17,6 @@ import java.util.Arrays;
  *
  * @author Michelle.Chung
  */
-@SaIgnore
 @Validated
 @RequiredArgsConstructor
 @RestController
