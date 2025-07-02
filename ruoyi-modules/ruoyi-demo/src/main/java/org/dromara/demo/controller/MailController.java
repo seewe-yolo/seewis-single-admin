@@ -44,11 +44,11 @@ public class MailController {
      * @param to       接收人
      * @param subject  标题
      * @param text     内容
-     * @param filePath 附件路径
      */
     @GetMapping("/sendMessageWithAttachment")
-    public R<Void> sendMessageWithAttachment(String to, String subject, String text, String filePath) {
-        MailUtils.sendText(to, subject, text, new File(filePath));
+    public R<Void> sendMessageWithAttachment(String to, String subject, String text) {
+        // 附件路径 禁止前端传递 有任意读取系统文件风险
+        MailUtils.sendText(to, subject, text, new File("/xxx/xxx"));
         return R.ok();
     }
 
@@ -58,10 +58,11 @@ public class MailController {
      * @param to       接收人
      * @param subject  标题
      * @param text     内容
-     * @param paths    附件路径
      */
     @GetMapping("/sendMessageWithAttachments")
-    public R<Void> sendMessageWithAttachments(String to, String subject, String text, String[] paths) {
+    public R<Void> sendMessageWithAttachments(String to, String subject, String text) {
+        // 附件路径 禁止前端传递 有任意读取系统文件风险
+        String[] paths = new String[]{"/xxx/xxx", "/xxx/xxx"};
         File[] array = Arrays.stream(paths).map(File::new).toArray(File[]::new);
         MailUtils.sendText(to, subject, text, array);
         return R.ok();
