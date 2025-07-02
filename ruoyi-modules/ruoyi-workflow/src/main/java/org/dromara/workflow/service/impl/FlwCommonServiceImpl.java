@@ -19,7 +19,6 @@ import org.dromara.warm.flow.orm.entity.FlowTask;
 import org.dromara.workflow.common.ConditionalOnEnable;
 import org.dromara.workflow.common.enums.MessageTypeEnum;
 import org.dromara.workflow.service.IFlwCommonService;
-import org.dromara.workflow.service.IFlwTaskAssigneeService;
 import org.dromara.workflow.service.IFlwTaskService;
 import org.springframework.stereotype.Service;
 
@@ -39,26 +38,6 @@ import java.util.stream.Collectors;
 @Service
 public class FlwCommonServiceImpl implements IFlwCommonService {
     private final NodeService nodeService;
-
-    /**
-     * 构建工作流用户
-     *
-     * @param permissionList 办理用户
-     * @return 用户
-     */
-    @Override
-    public List<String> buildUser(List<String> permissionList) {
-        if (CollUtil.isEmpty(permissionList)) {
-            return List.of();
-        }
-        IFlwTaskAssigneeService taskAssigneeService = SpringUtils.getBean(IFlwTaskAssigneeService.class);
-        String processedBys = CollUtil.join(permissionList,  StringUtils.SEPARATOR);
-        // 根据 processedBy 前缀判断处理人类型，分别获取用户列表
-        List<UserDTO> users = taskAssigneeService.fetchUsersByStorageIds(processedBys);
-
-        return StreamUtils.toList(users, userDTO -> String.valueOf(userDTO.getUserId()));
-    }
-
 
     /**
      * 发送消息
