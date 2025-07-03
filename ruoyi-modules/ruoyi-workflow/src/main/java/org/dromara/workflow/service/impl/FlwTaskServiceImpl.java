@@ -528,15 +528,15 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
         // 只获取中间节点
         nextFlowNodes = StreamUtils.filter(nextFlowNodes, node -> NodeType.BETWEEN.getKey().equals(node.getNodeType()));
         if (CollUtil.isNotEmpty(nextNodeList)) {
-            // 构建以下节点数据
+            //构建以下节点数据
             List<Task> buildNextTaskList = StreamUtils.toList(nextNodeList, node -> taskService.addTask(node, instance, definition, FlowParams.build()));
-            // 办理人变量替换
-            ExpressionUtil.evalVariable(buildNextTaskList,
-                FlowParams.build()
-                    .variable(mergeVariable)
-            );
+            //办理人变量替换
+            ExpressionUtil.evalVariable(buildNextTaskList, FlowParams.build().variable(mergeVariable));
             for (FlowNode flowNode : nextFlowNodes) {
-                buildNextTaskList.stream().filter(t -> t.getNodeCode().equals(flowNode.getNodeCode())).findFirst().ifPresent(t -> {
+                Optional<Task> first = buildNextTaskList.stream()
+                    .filter(t -> t.getNodeCode().equals(flowNode.getNodeCode()))
+                    .findFirst();
+                first.ifPresent(t -> {
                     if (CollUtil.isNotEmpty(t.getPermissionList())) {
                         List<UserDTO> users = flwTaskAssigneeService.fetchUsersByStorageIds(String.join(StringUtils.SEPARATOR, t.getPermissionList()));
                         if (CollUtil.isNotEmpty(users)) {
@@ -681,12 +681,12 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
     /**
      * 获取当前任务的所有办理人
      *
-     * @param taskId 任务id
+     * @param taskIds 任务id
      */
     @Override
-    public List<UserDTO> currentTaskAllUser(Long taskId) {
+    public List<UserDTO> currentTaskAllUser(List<Long> taskIds) {
         // 获取与当前任务关联的用户列表
-        List<User> userList = FlowEngine.userService().getByAssociateds(Collections.singletonList(taskId));
+        List<User> userList = FlowEngine.userService().getByAssociateds(taskIds);
         if (CollUtil.isEmpty(userList)) {
             return Collections.emptyList();
         }

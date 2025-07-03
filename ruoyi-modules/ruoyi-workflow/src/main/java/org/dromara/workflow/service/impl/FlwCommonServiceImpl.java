@@ -49,40 +49,36 @@ public class FlwCommonServiceImpl implements IFlwCommonService {
     @Override
     public void sendMessage(String flowName, Long instId, List<String> messageType, String message) {
         IFlwTaskService flwTaskService = SpringUtils.getBean(IFlwTaskService.class);
-        List<UserDTO> userList = new ArrayList<>();
         List<FlowTask> list = flwTaskService.selectByInstId(instId);
         if (StringUtils.isBlank(message)) {
             message = "有新的【" + flowName + "】单据已经提交至您，请您及时处理。";
         }
-        for (Task task : list) {
-            List<UserDTO> users = flwTaskService.currentTaskAllUser(task.getId());
-            if (CollUtil.isNotEmpty(users)) {
-                userList.addAll(users);
-            }
+        List<UserDTO> userList = flwTaskService.currentTaskAllUser(StreamUtils.toList(list, FlowTask::getId));
+        if (CollUtil.isEmpty(userList)) {
+            return;
         }
-        if (CollUtil.isNotEmpty(userList)) {
-            for (String code : messageType) {
-                MessageTypeEnum messageTypeEnum = MessageTypeEnum.getByCode(code);
-                if (ObjectUtil.isNotEmpty(messageTypeEnum)) {
-                    switch (messageTypeEnum) {
-                        case SYSTEM_MESSAGE:
-                            SseMessageDto dto = new SseMessageDto();
-                            dto.setUserIds(StreamUtils.toList(userList, UserDTO::getUserId).stream().distinct().collect(Collectors.toList()));
-                            dto.setMessage(message);
-                            SseMessageUtils.publishMessage(dto);
-                            break;
-                        case EMAIL_MESSAGE:
-                            MailUtils.sendText(StreamUtils.join(userList, UserDTO::getEmail), "单据审批提醒", message);
-                            break;
-                        case SMS_MESSAGE:
-                            //todo 短信发送
-                            break;
-                        default:
-                            throw new IllegalStateException("Unexpected value: " + messageTypeEnum);
-                    }
+        for (String code : messageType) {
+            MessageTypeEnum messageTypeEnum = MessageTypeEnum.getByCode(code);
+            if (ObjectUtil.isEmpty(messageTypeEnum)) {
+                continue;
+            }
+            switch (messageTypeEnum) {
+                case SYSTEM_MESSAGE -> {
+                    SseMessageDto dto = new SseMessageDto();
+                    dto.setUserIds(StreamUtils.toList(userList, UserDTO::getUserId).stream().distinct().collect(Collectors.toList()));
+                    dto.setMessage(message);
+                    SseMessageUtils.publishMessage(dto);
                 }
+                case EMAIL_MESSAGE -> {
+                    MailUtils.sendText(StreamUtils.join(userList, UserDTO::getEmail), "单据审批提醒", message);
+                }
+                case SMS_MESSAGE -> {
+                    //todo 短信发送
+                }
+                default -> throw new IllegalStateException("Unexpected value: " + messageTypeEnum);
             }
         }
+
     }
 
 

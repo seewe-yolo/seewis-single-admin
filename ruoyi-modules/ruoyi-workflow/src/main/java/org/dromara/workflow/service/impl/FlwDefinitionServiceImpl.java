@@ -116,8 +116,8 @@ public class FlwDefinitionServiceImpl implements IFlwDefinitionService {
         List<FlowNode> flowNodes = flowNodeMapper.selectList(new LambdaQueryWrapper<FlowNode>().eq(FlowNode::getDefinitionId, id));
         List<String> errorMsg = new ArrayList<>();
         if (CollUtil.isNotEmpty(flowNodes)) {
+            String applyNodeCode = flwCommonService.applyNodeCode(id);
             for (FlowNode flowNode : flowNodes) {
-                String applyNodeCode = flwCommonService.applyNodeCode(id);
                 if (StringUtils.isBlank(flowNode.getPermissionFlag()) && !applyNodeCode.equals(flowNode.getNodeCode()) && NodeType.BETWEEN.getKey().equals(flowNode.getNodeType())) {
                     errorMsg.add(flowNode.getNodeName());
                 }
