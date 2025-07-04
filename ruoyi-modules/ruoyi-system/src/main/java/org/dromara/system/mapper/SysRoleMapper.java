@@ -1,13 +1,16 @@
 package org.dromara.system.mapper;
 
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
+import org.dromara.common.core.exception.ServiceException;
 import org.dromara.common.mybatis.annotation.DataColumn;
 import org.dromara.common.mybatis.annotation.DataPermission;
 import org.dromara.common.mybatis.core.mapper.BaseMapperPlus;
+import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.system.domain.SysRole;
 import org.dromara.system.domain.vo.SysRoleVo;
 
@@ -73,6 +76,21 @@ public interface SysRoleMapper extends BaseMapperPlus<SysRole, SysRoleVo> {
     })
     default long selectRoleCount(List<Long> roleIds) {
         return this.selectCount(new LambdaQueryWrapper<SysRole>().in(SysRole::getRoleId, roleIds));
+    }
+
+    /**
+     * 校验角色是否有数据权限
+     *
+     * @param roleIds 角色ID列表（支持传单个ID）
+     */
+    default void checkRoleDataScope(List<Long> roleIds) {
+        if (CollUtil.isEmpty(roleIds) || LoginHelper.isSuperAdmin()) {
+            return;
+        }
+        long count = this.selectRoleCount(roleIds);
+        if (count != roleIds.size()) {
+            throw new ServiceException("没有权限访问部分角色数据！");
+        }
     }
 
     /**
