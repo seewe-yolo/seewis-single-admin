@@ -448,27 +448,29 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param clear 清除已存在的关联数据
      */
     private void insertUserPost(SysUserBo user, boolean clear) {
-        List<Long> postIds = List.of(user.getPostIds());
-        if (ArrayUtil.isNotEmpty(postIds)) {
-            // 判断是否具有此角色的操作权限
-            List<SysPostVo> posts = postMapper.selectPostList(
-                new LambdaQueryWrapper<SysPost>().in(SysPost::getPostId, postIds));
-            if (CollUtil.isEmpty(posts) || posts.size() != postIds.size()) {
-                throw new ServiceException("没有权限访问岗位的数据");
-            }
-            if (clear) {
-                // 删除用户与岗位关联
-                userPostMapper.delete(new LambdaQueryWrapper<SysUserPost>().eq(SysUserPost::getUserId, user.getUserId()));
-            }
-            // 新增用户与岗位管理
-            List<SysUserPost> list = StreamUtils.toList(postIds, postId -> {
-                SysUserPost up = new SysUserPost();
-                up.setUserId(user.getUserId());
-                up.setPostId(postId);
-                return up;
-            });
-            userPostMapper.insertBatch(list);
+        Long[] postIdArr = user.getPostIds();
+        if (ArrayUtil.isEmpty(postIdArr)) {
+            return;
         }
+        List<Long> postIds = Arrays.asList(postIdArr);
+        // 判断是否具有此角色的操作权限
+        List<SysPostVo> posts = postMapper.selectPostList(
+            new LambdaQueryWrapper<SysPost>().in(SysPost::getPostId, postIds));
+        if (CollUtil.isEmpty(posts) || posts.size() != postIds.size()) {
+            throw new ServiceException("没有权限访问岗位的数据");
+        }
+        if (clear) {
+            // 删除用户与岗位关联
+            userPostMapper.delete(new LambdaQueryWrapper<SysUserPost>().eq(SysUserPost::getUserId, user.getUserId()));
+        }
+        // 新增用户与岗位管理
+        List<SysUserPost> list = StreamUtils.toList(postIds, postId -> {
+            SysUserPost up = new SysUserPost();
+            up.setUserId(user.getUserId());
+            up.setPostId(postId);
+            return up;
+        });
+        userPostMapper.insertBatch(list);
     }
 
     /**
