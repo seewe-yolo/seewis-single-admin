@@ -82,8 +82,8 @@ public interface SysRoleMapper extends BaseMapperPlus<SysRole, SysRoleVo> {
      * @return 对应的角色信息
      */
     @DataPermission({
-        @DataColumn(key = "deptName", value = "r.create_dept"),
-        @DataColumn(key = "userName", value = "r.create_by")
+        @DataColumn(key = "deptName", value = "create_dept"),
+        @DataColumn(key = "userName", value = "create_by")
     })
     default SysRoleVo selectRoleById(Long roleId) {
         return this.selectVoById(roleId);
