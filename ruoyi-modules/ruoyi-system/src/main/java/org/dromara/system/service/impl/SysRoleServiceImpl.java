@@ -253,7 +253,23 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
         if (ObjectUtil.isNull(roleId)) {
             return;
         }
-        baseMapper.checkRoleDataScope(Collections.singletonList(roleId));
+        this.checkRoleDataScope(Collections.singletonList(roleId));
+    }
+
+    /**
+     * 校验角色是否有数据权限
+     *
+     * @param roleIds 角色ID列表（支持传单个ID）
+     */
+    @Override
+    public void checkRoleDataScope(List<Long> roleIds) {
+        if (CollUtil.isEmpty(roleIds) || LoginHelper.isSuperAdmin()) {
+            return;
+        }
+        long count = baseMapper.selectRoleCount(roleIds);
+        if (count != roleIds.size()) {
+            throw new ServiceException("没有权限访问部分角色数据！");
+        }
     }
 
     /**
@@ -410,8 +426,8 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int deleteRoleByIds(List<Long> roleIds) {
+        this.checkRoleDataScope(roleIds);
         List<SysRole> roles = baseMapper.selectByIds(roleIds);
-        baseMapper.checkRoleDataScope(roleIds);
         for (SysRole role : roles) {
             checkRoleAllowed(BeanUtil.toBean(role, SysRoleBo.class));
             if (countUserRoleByRoleId(role.getRoleId()) > 0) {
