@@ -4,6 +4,7 @@ import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -38,6 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 角色 业务层处理
@@ -354,19 +356,18 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param role 角色对象
      */
     private int insertRoleMenu(SysRoleBo role) {
-        int rows = 1;
-        // 新增用户与角色管理
-        List<SysRoleMenu> list = new ArrayList<>();
-        for (Long menuId : role.getMenuIds()) {
-            SysRoleMenu rm = new SysRoleMenu();
-            rm.setRoleId(role.getRoleId());
-            rm.setMenuId(menuId);
-            list.add(rm);
+        Long[] menuIds = role.getMenuIds();
+        if (ArrayUtil.isEmpty(menuIds)) {
+            return 0;
         }
-        if (CollUtil.isEmpty(list)) {
-            rows = roleMenuMapper.insertBatch(list) ? list.size() : 0;
-        }
-        return rows;
+        List<SysRoleMenu> roleMenuList = Arrays.stream(menuIds)
+            .map(menuId -> {
+                SysRoleMenu roleMenu = new SysRoleMenu();
+                roleMenu.setRoleId(role.getRoleId());
+                roleMenu.setMenuId(menuId);
+                return roleMenu;
+            }).collect(Collectors.toList());
+        return roleMenuMapper.insertBatch(roleMenuList) ? roleMenuList.size() : 0;
     }
 
     /**
@@ -375,19 +376,18 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param role 角色对象
      */
     private int insertRoleDept(SysRoleBo role) {
-        int rows = 1;
-        // 新增角色与部门（数据权限）管理
-        List<SysRoleDept> list = new ArrayList<>();
-        for (Long deptId : role.getDeptIds()) {
-            SysRoleDept rd = new SysRoleDept();
-            rd.setRoleId(role.getRoleId());
-            rd.setDeptId(deptId);
-            list.add(rd);
+        Long[] deptIds = role.getDeptIds();
+        if (ArrayUtil.isEmpty(deptIds)) {
+            return 0;
         }
-        if (CollUtil.isEmpty(list)) {
-            rows = roleDeptMapper.insertBatch(list) ? list.size() : 0;
-        }
-        return rows;
+        List<SysRoleDept> roleDeptList = Arrays.stream(deptIds)
+            .map(deptId -> {
+                SysRoleDept roleDept = new SysRoleDept();
+                roleDept.setRoleId(role.getRoleId());
+                roleDept.setDeptId(deptId);
+                return roleDept;
+            }).collect(Collectors.toList());
+        return roleDeptMapper.insertBatch(roleDeptList) ? roleDeptList.size() : 0;
     }
 
     /**
