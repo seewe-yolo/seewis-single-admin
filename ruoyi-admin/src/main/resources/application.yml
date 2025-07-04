@@ -173,13 +173,6 @@ springdoc:
       name: Lion Li
       email: crazylionli@163.com
       url: https://gitee.com/dromara/RuoYi-Vue-Plus
-  components:
-    # 鉴权方式配置
-    security-schemes:
-      apiKey:
-        type: APIKEY
-        in: HEADER
-        name: ${sa-token.token-name}
   #这里定义了两个分组，可定义多个，也可以不定义
   group-configs:
     - group: 1.演示模块
@@ -197,7 +190,7 @@ springdoc:
 xss:
   # 过滤开关
   enabled: true
-  # 排除链接（多个用逗号分隔）
+  # 排除链接
   excludeUrls:
     - /system/notice
 
