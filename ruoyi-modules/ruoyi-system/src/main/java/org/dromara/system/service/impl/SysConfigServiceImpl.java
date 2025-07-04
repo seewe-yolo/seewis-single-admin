@@ -40,6 +40,13 @@ public class SysConfigServiceImpl implements ISysConfigService, ConfigService {
 
     private final SysConfigMapper baseMapper;
 
+    /**
+     * 分页查询参数配置列表
+     *
+     * @param config    查询条件
+     * @param pageQuery 分页参数
+     * @return 参数配置分页列表
+     */
     @Override
     public TableDataInfo<SysConfigVo> selectPageConfigList(SysConfigBo config, PageQuery pageQuery) {
         LambdaQueryWrapper<SysConfig> lqw = buildQueryWrapper(config);

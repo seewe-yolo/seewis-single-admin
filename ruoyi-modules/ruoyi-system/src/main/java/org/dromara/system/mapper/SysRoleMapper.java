@@ -20,6 +20,12 @@ import java.util.List;
  */
 public interface SysRoleMapper extends BaseMapperPlus<SysRole, SysRoleVo> {
 
+    /**
+     * 构建根据用户ID查询角色ID的SQL子查询
+     *
+     * @param userId 用户ID
+     * @return 查询用户对应角色ID的SQL语句字符串
+     */
     default String buildRoleByUserSql(Long userId) {
         return """
                 select role_id from sys_user_role where user_id = %d

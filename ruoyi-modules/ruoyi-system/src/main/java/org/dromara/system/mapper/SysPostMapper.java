@@ -48,10 +48,10 @@ public interface SysPostMapper extends BaseMapperPlus<SysPost, SysPostVo> {
     }
 
     /**
-     * 查询用户所属岗位组
+     * 根据用户ID查询其关联的岗位列表
      *
      * @param userId 用户ID
-     * @return 结果
+     * @return 岗位信息列表
      */
     default List<SysPostVo> selectPostsByUserId(Long userId) {
         return this.selectVoList(new LambdaQueryWrapper<SysPost>()
