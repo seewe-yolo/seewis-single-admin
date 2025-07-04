@@ -48,7 +48,7 @@ public interface SysRoleMapper extends BaseMapperPlus<SysRole, SysRoleVo> {
     }
 
     /**
-     * 根据条件分页查询角色数据
+     * 根据条件查询角色数据
      *
      * @param queryWrapper 查询条件
      * @return 角色数据集合信息
@@ -59,6 +59,20 @@ public interface SysRoleMapper extends BaseMapperPlus<SysRole, SysRoleVo> {
     })
     default List<SysRoleVo> selectRoleList(@Param(Constants.WRAPPER) Wrapper<SysRole> queryWrapper) {
         return this.selectVoList(queryWrapper);
+    }
+
+    /**
+     * 根据角色ID集合查询角色数量
+     *
+     * @param roleIds 角色ID列表
+     * @return 匹配的角色数量
+     */
+    @DataPermission({
+        @DataColumn(key = "deptName", value = "create_dept"),
+        @DataColumn(key = "userName", value = "create_by")
+    })
+    default long selectRoleCount(List<Long> roleIds) {
+        return this.selectCount(new LambdaQueryWrapper<SysRole>().in(SysRole::getRoleId, roleIds));
     }
 
     /**

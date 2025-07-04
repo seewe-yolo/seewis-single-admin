@@ -440,6 +440,9 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      */
     @Override
     public int deleteAuthUser(SysUserRole userRole) {
+        if (LoginHelper.getUserId().equals(userRole.getUserId())) {
+            throw new ServiceException("不允许修改当前用户角色!");
+        }
         int rows = userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>()
             .eq(SysUserRole::getRoleId, userRole.getRoleId())
             .eq(SysUserRole::getUserId, userRole.getUserId()));
@@ -459,6 +462,9 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
     @Override
     public int deleteAuthUsers(Long roleId, Long[] userIds) {
         List<Long> ids = List.of(userIds);
+        if (ids.contains(LoginHelper.getUserId())) {
+            throw new ServiceException("不允许修改当前用户角色!");
+        }
         int rows = userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>()
             .eq(SysUserRole::getRoleId, roleId)
             .in(SysUserRole::getUserId, ids));
@@ -480,6 +486,9 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
         // 新增用户与角色管理
         int rows = 1;
         List<Long> ids = List.of(userIds);
+        if (ids.contains(LoginHelper.getUserId())) {
+            throw new ServiceException("不允许修改当前用户角色!");
+        }
         List<SysUserRole> list = StreamUtils.toList(ids, userId -> {
             SysUserRole ur = new SysUserRole();
             ur.setUserId(userId);
