@@ -3,7 +3,6 @@ package org.dromara.system.mapper;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.apache.ibatis.annotations.Param;
 import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.mybatis.annotation.DataColumn;
 import org.dromara.common.mybatis.annotation.DataPermission;
@@ -20,6 +19,20 @@ import java.util.List;
  * @author Lion Li
  */
 public interface SysDeptMapper extends BaseMapperPlus<SysDept, SysDeptVo> {
+
+    default String buildDeptByRoleSql(Long roleId) {
+        return """
+                select dept_id from sys_role_dept where role_id = %d
+            """.formatted(roleId);
+    }
+
+    default String buildParentDeptByRoleSql(Long roleId) {
+        return """
+                select parent_id from sys_dept where dept_id in (
+                    select dept_id from sys_role_dept where role_id = %d
+                )
+            """.formatted(roleId);
+    }
 
     /**
      * 查询部门管理数据
@@ -93,6 +106,16 @@ public interface SysDeptMapper extends BaseMapperPlus<SysDept, SysDeptVo> {
      * @param deptCheckStrictly 部门树选择项是否关联显示
      * @return 选中部门列表
      */
-    List<Long> selectDeptListByRoleId(@Param("roleId") Long roleId, @Param("deptCheckStrictly") boolean deptCheckStrictly);
+    default List<Long> selectDeptListByRoleId(Long roleId, boolean deptCheckStrictly) {
+        LambdaQueryWrapper<SysDept> wrapper = new LambdaQueryWrapper<>();
+        wrapper.select(SysDept::getDeptId)
+            .inSql(SysDept::getDeptId, this.buildDeptByRoleSql(roleId))
+            .orderByAsc(SysDept::getParentId)
+            .orderByAsc(SysDept::getOrderNum);
+        if (deptCheckStrictly) {
+            wrapper.notInSql(SysDept::getDeptId, this.buildParentDeptByRoleSql(roleId));
+        }
+        return this.selectObjs(wrapper);
+    }
 
 }
