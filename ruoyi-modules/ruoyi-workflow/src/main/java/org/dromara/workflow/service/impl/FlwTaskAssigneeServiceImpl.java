@@ -23,6 +23,7 @@ import org.dromara.warm.flow.ui.vo.HandlerFeedBackVo;
 import org.dromara.warm.flow.ui.vo.HandlerSelectVo;
 import org.dromara.workflow.common.ConditionalOnEnable;
 import org.dromara.workflow.common.enums.TaskAssigneeEnum;
+import org.dromara.workflow.service.IFlwSpelService;
 import org.dromara.workflow.service.IFlwTaskAssigneeService;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +46,7 @@ public class FlwTaskAssigneeServiceImpl implements IFlwTaskAssigneeService, Hand
     private final DeptService deptService;
     private final RoleService roleService;
     private final PostService postService;
+    private final IFlwSpelService spelService;
 
     /**
      * 获取办理人权限设置列表tabs页签
@@ -123,6 +125,7 @@ public class FlwTaskAssigneeServiceImpl implements IFlwTaskAssigneeService, Hand
             case ROLE -> taskAssigneeService.selectRolesByTaskAssigneeList(taskQuery);
             case DEPT -> taskAssigneeService.selectDeptsByTaskAssigneeList(taskQuery);
             case POST -> taskAssigneeService.selectPostsByTaskAssigneeList(taskQuery);
+            case SPEL -> spelService.selectSpelByTaskAssigneeList(taskQuery);
         };
     }
 
@@ -203,6 +206,7 @@ public class FlwTaskAssigneeServiceImpl implements IFlwTaskAssigneeService, Hand
             case ROLE -> userService.selectUsersByRoleIds(ids);
             case DEPT -> userService.selectUsersByDeptIds(ids);
             case POST -> userService.selectUsersByPostIds(ids);
+            case SPEL -> new ArrayList<>();
         };
     }
 
@@ -219,6 +223,7 @@ public class FlwTaskAssigneeServiceImpl implements IFlwTaskAssigneeService, Hand
             case ROLE -> roleService.selectRoleNamesByIds(ids);
             case DEPT -> deptService.selectDeptNamesByIds(ids);
             case POST -> postService.selectPostNamesByIds(ids);
+            case SPEL -> new HashMap<>();
         };
     }
 
