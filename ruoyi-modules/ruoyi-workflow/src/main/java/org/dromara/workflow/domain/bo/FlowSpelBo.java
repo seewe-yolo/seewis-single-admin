@@ -28,13 +28,11 @@ public class FlowSpelBo extends BaseEntity {
     /**
      * 组件名称
      */
-    @NotBlank(message = "组件名称不能为空", groups = { AddGroup.class, EditGroup.class })
     private String componentName;
 
     /**
      * 方法名
      */
-    @NotBlank(message = "方法名不能为空", groups = { AddGroup.class, EditGroup.class })
     private String methodName;
 
     /**
