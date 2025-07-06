@@ -1,5 +1,6 @@
 package org.dromara.common.doc.config;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.info.Info;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * 接口文档配置
@@ -54,15 +56,17 @@ public class SpringDocConfig {
         openApi.externalDocs(properties.getExternalDocs());
         openApi.tags(properties.getTags());
         openApi.paths(properties.getPaths());
-        if (properties.getComponents() != null) {
-            openApi.components(properties.getComponents());
-            Set<String> keySet = properties.getComponents().getSecuritySchemes().keySet();
-            List<SecurityRequirement> list = new ArrayList<>();
-            SecurityRequirement securityRequirement = new SecurityRequirement();
-            keySet.forEach(securityRequirement::addList);
-            list.add(securityRequirement);
-            openApi.security(list);
-        }
+
+        Optional.ofNullable(properties.getComponents())
+            .ifPresent(components -> {
+                openApi.components(components);
+                Set<String> keySet = components.getSecuritySchemes().keySet();
+                List<SecurityRequirement> list = new ArrayList<>();
+                SecurityRequirement securityRequirement = new SecurityRequirement();
+                keySet.forEach(securityRequirement::addList);
+                list.add(securityRequirement);
+                openApi.security(list);
+            });
         return openApi;
     }
 
