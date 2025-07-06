@@ -2,13 +2,14 @@ package org.dromara.workflow.service;
 
 import org.dromara.common.core.domain.dto.TaskAssigneeDTO;
 import org.dromara.common.core.domain.model.TaskAssigneeBody;
+import org.dromara.common.mybatis.core.page.PageQuery;
+import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.workflow.domain.bo.FlowSpelBo;
 import org.dromara.workflow.domain.vo.FlowSpelVo;
-import org.dromara.common.mybatis.core.page.TableDataInfo;
-import org.dromara.common.mybatis.core.page.PageQuery;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 流程spel达式定义Service接口
@@ -17,8 +18,6 @@ import java.util.List;
  * @date 2025-07-04
  */
 public interface IFlwSpelService {
-
-    TaskAssigneeDTO selectSpelByTaskAssigneeList(TaskAssigneeBody taskQuery);
 
     /**
      * 查询流程spel达式定义
@@ -69,4 +68,21 @@ public interface IFlwSpelService {
      * @return 是否删除成功
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    /**
+     * 查询spel并返回任务指派的列表，支持分页
+     *
+     * @param taskQuery 查询条件
+     * @return 办理人
+     */
+    TaskAssigneeDTO selectSpelByTaskAssigneeList(TaskAssigneeBody taskQuery);
+
+    /**
+     * 根据视图 SpEL 表达式列表，查询对应的备注信息
+     *
+     * @param viewSpels SpEL 表达式列表
+     * @return 映射表：key 为 SpEL 表达式，value 为对应备注；若为空则返回空 Map
+     */
+    Map<String, String> selectRemarksBySpels(List<String> viewSpels);
+
 }

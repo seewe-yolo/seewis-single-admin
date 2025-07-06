@@ -92,24 +92,28 @@ public class FlwTaskAssigneeServiceImpl implements IFlwTaskAssigneeService, Hand
         // 解析并归类 ID，同时记录原始顺序和对应解析结果
         Map<TaskAssigneeEnum, List<Long>> typeIdMap = new EnumMap<>(TaskAssigneeEnum.class);
         Map<String, Pair<TaskAssigneeEnum, Long>> parsedMap = new LinkedHashMap<>();
+        List<String> spelList = new ArrayList<>();
         for (String storageId : storageIds) {
             Pair<TaskAssigneeEnum, Long> parsed = this.parseStorageId(storageId);
             parsedMap.put(storageId, parsed);
             if (parsed != null) {
                 typeIdMap.computeIfAbsent(parsed.getKey(), k -> new ArrayList<>()).add(parsed.getValue());
+            } else if (StringUtils.startsWith(storageId, "#")) {
+                // #前缀表示SpEL办理人变量策略
+                spelList.add(storageId);
             }
         }
 
         // 查询所有类型对应的 ID 名称映射
         Map<TaskAssigneeEnum, Map<Long, String>> nameMap = new EnumMap<>(TaskAssigneeEnum.class);
         typeIdMap.forEach((type, ids) -> nameMap.put(type, this.getNamesByType(type, ids)));
-
+        Map<String, String> spelMap = spelService.selectRemarksBySpels(spelList);
         // 组装返回结果，保持原始顺序
         return parsedMap.entrySet().stream()
             .map(entry -> {
                 String storageId = entry.getKey();
                 Pair<TaskAssigneeEnum, Long> parsed = entry.getValue();
-                String handlerName = (parsed == null) ? null
+                String handlerName = (parsed == null) ? spelMap.get(storageId)
                     : nameMap.getOrDefault(parsed.getKey(), Collections.emptyMap())
                     .get(parsed.getValue());
                 return new HandlerFeedBackVo(storageId, handlerName);
@@ -239,6 +243,8 @@ public class FlwTaskAssigneeServiceImpl implements IFlwTaskAssigneeService, Hand
         }
         // 跳过以 $ 或 # 开头的字符串
         if (StringUtils.startsWith(storageId, "$") || StringUtils.startsWith(storageId, "#")) {
+            // $前缀表示默认办理人变量策略
+            // #前缀表示spel办理人变量策略
             log.debug("跳过 storageId 解析，检测到内置变量表达式：{}", storageId);
             return null;
         }
