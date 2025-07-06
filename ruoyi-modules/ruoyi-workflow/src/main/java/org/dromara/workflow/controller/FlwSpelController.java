@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import org.dromara.workflow.common.ConditionalOnEnable;
 import org.dromara.workflow.domain.bo.FlowSpelBo;
 import org.dromara.workflow.domain.vo.FlowSpelVo;
 import org.dromara.workflow.service.IFlwSpelService;
@@ -28,6 +29,7 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
  * @author Michelle.Chung
  * @date 2025-07-04
  */
+@ConditionalOnEnable
 @Validated
 @RequiredArgsConstructor
 @RestController

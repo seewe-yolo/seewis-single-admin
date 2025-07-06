@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.workflow.common.ConditionalOnEnable;
 import org.dromara.workflow.domain.FlowSpel;
 import org.dromara.workflow.domain.bo.FlowSpelBo;
 import org.dromara.workflow.domain.vo.FlowSpelVo;
@@ -29,6 +30,7 @@ import java.util.Map;
  * @author Michelle.Chung
  * @date 2025-07-04
  */
+@ConditionalOnEnable
 @Slf4j
 @RequiredArgsConstructor
 @Service
