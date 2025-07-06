@@ -98,8 +98,9 @@ public class FlwTaskAssigneeServiceImpl implements IFlwTaskAssigneeService, Hand
             parsedMap.put(storageId, parsed);
             if (parsed != null) {
                 typeIdMap.computeIfAbsent(parsed.getKey(), k -> new ArrayList<>()).add(parsed.getValue());
-            } else if (StringUtils.startsWith(storageId, "#")) {
-                // #前缀表示SpEL办理人变量策略
+            } else if (StringUtils.startsWith(storageId, "$") || StringUtils.startsWith(storageId, "#")) {
+                // $前缀表示默认办理人变量策略
+                // #前缀表示spel办理人变量策略
                 spelList.add(storageId);
             }
         }
