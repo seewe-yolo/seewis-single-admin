@@ -1,19 +1,19 @@
 package org.dromara.workflow.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.dto.TaskAssigneeDTO;
 import org.dromara.common.core.domain.model.TaskAssigneeBody;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.StringUtils;
-import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.mybatis.core.page.PageQuery;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.workflow.common.ConditionalOnEnable;
 import org.dromara.workflow.domain.FlowSpel;
 import org.dromara.workflow.domain.bo.FlowSpelBo;
@@ -22,9 +22,9 @@ import org.dromara.workflow.mapper.FlwSpelMapper;
 import org.dromara.workflow.service.IFlwSpelService;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -180,6 +180,7 @@ public class FlwSpelServiceImpl implements IFlwSpelService {
         List<FlowSpel> list = baseMapper.selectList(
             new LambdaQueryWrapper<FlowSpel>()
                 .select(FlowSpel::getViewSpel, FlowSpel::getRemark)
+                .in(FlowSpel::getViewSpel, viewSpels)
         );
         return StreamUtils.toMap(list, FlowSpel::getViewSpel, FlowSpel::getRemark);
     }
