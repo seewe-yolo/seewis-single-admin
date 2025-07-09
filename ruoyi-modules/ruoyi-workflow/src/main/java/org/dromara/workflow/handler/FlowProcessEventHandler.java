@@ -33,7 +33,7 @@ public class FlowProcessEventHandler {
      */
     public void processHandler(String flowCode, Instance instance, String status, Map<String, Object> params, boolean submit) {
         log.info("【流程事件发布】流程编码: {}, 业务ID: {}, 流程状态: {}, 节点类型: {}, 节点编码: {}, 节点名称: {}, 是否申请人节点: {}, 参数: {}",
-            flowCode, instance.getBusinessId(), status, instance.getNodeType(), instance.getNodeCode(), instance.getNodeName(), submit, params);
+           flowCode, instance.getBusinessId(), status, instance.getNodeType(), instance.getNodeCode(), instance.getNodeName(), submit, params);
         ProcessEvent processEvent = new ProcessEvent();
         processEvent.setFlowCode(flowCode);
         processEvent.setBusinessId(instance.getBusinessId());
@@ -53,7 +53,7 @@ public class FlowProcessEventHandler {
      * @param instance   实例数据
      * @param taskId     任务id
      */
-    public void processTaskHandler(String flowCode, Instance instance, Long taskId) {
+    public void processTaskHandler(String flowCode, Instance instance, Long taskId, Map<String, Object> params) {
         log.info("【流程任务事件发布】流程编码: {}, 业务ID: {}, 节点类型: {}, 节点编码: {}, 节点名称: {}, 任务ID: {}",
             flowCode, instance.getBusinessId(), instance.getNodeType(), instance.getNodeCode(), instance.getNodeName(), taskId);
         ProcessTaskEvent processTaskEvent = new ProcessTaskEvent();
@@ -64,6 +64,7 @@ public class FlowProcessEventHandler {
         processTaskEvent.setNodeName(instance.getNodeName());
         processTaskEvent.setTaskId(taskId);
         processTaskEvent.setStatus(instance.getFlowStatus());
+        processTaskEvent.setParams(params);
         SpringUtils.context().publishEvent(processTaskEvent);
     }
 
@@ -74,7 +75,7 @@ public class FlowProcessEventHandler {
      * @param businessId  业务ID
      */
     public void processDeleteHandler(String flowCode, String businessId) {
-        log.info("【流程删除事件发布】, 流程编码: {}, 业务ID: {}", flowCode, businessId);
+        log.info("【流程删除事件发布】流程编码: {}, 业务ID: {}", flowCode, businessId);
         ProcessDeleteEvent processDeleteEvent = new ProcessDeleteEvent();
         processDeleteEvent.setFlowCode(flowCode);
         processDeleteEvent.setBusinessId(businessId);
