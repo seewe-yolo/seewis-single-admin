@@ -52,6 +52,7 @@ public class FlowProcessEventHandler {
      * @param flowCode   流程定义编码
      * @param instance   实例数据
      * @param taskId     任务id
+     * @param params     上一个任务的办理参数
      */
     public void processTaskHandler(String flowCode, Instance instance, Long taskId, Map<String, Object> params) {
         log.info("【流程任务事件发布】流程编码: {}, 业务ID: {}, 节点类型: {}, 节点编码: {}, 节点名称: {}, 任务ID: {}",
