@@ -17,7 +17,6 @@ import org.dromara.warm.flow.core.listener.GlobalListener;
 import org.dromara.warm.flow.core.listener.ListenerVariable;
 import org.dromara.warm.flow.core.service.InsService;
 import org.dromara.warm.flow.orm.entity.FlowInstance;
-import org.dromara.warm.flow.orm.entity.FlowTask;
 import org.dromara.workflow.common.ConditionalOnEnable;
 import org.dromara.workflow.common.constant.FlowConstant;
 import org.dromara.workflow.common.enums.TaskStatusEnum;
@@ -183,8 +182,7 @@ public class WorkflowGlobalListener implements GlobalListener {
             return flowStatus;
         } else {
             Long instanceId = instance.getId();
-            List<FlowTask> flowTasks = flwTaskService.selectByInstId(instanceId);
-            if (CollUtil.isEmpty(flowTasks)) {
+            if (flwTaskService.isTaskEnd(instanceId)) {
                 String status = BusinessStatusEnum.FINISH.getStatus();
                 // 更新流程状态为已完成
                 instanceService.updateStatus(instanceId, status);
