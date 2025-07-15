@@ -23,6 +23,11 @@ public class ProcessEvent implements Serializable {
     private String flowCode;
 
     /**
+     * 实例id
+     */
+    private Long instanceId;
+
+    /**
      * 业务id
      */
     private String businessId;
