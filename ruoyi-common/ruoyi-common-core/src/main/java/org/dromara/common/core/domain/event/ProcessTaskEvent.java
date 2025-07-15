@@ -43,6 +43,11 @@ public class ProcessTaskEvent implements Serializable {
     private Long taskId;
 
     /**
+     * 实例id
+     */
+    private Long instanceId;
+
+    /**
      * 业务id
      */
     private String businessId;
