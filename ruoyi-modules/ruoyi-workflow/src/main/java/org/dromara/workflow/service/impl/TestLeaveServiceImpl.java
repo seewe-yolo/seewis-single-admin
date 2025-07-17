@@ -9,10 +9,14 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.common.core.domain.dto.CompleteTaskDTO;
+import org.dromara.common.core.domain.dto.StartProcessDTO;
+import org.dromara.common.core.domain.dto.StartProcessReturnDTO;
 import org.dromara.common.core.domain.event.ProcessTaskEvent;
 import org.dromara.common.core.domain.event.ProcessDeleteEvent;
 import org.dromara.common.core.domain.event.ProcessEvent;
 import org.dromara.common.core.enums.BusinessStatusEnum;
+import org.dromara.common.core.exception.ServiceException;
 import org.dromara.common.core.service.WorkflowService;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -113,6 +117,35 @@ public class TestLeaveServiceImpl implements ITestLeaveService {
             bo.setId(add.getId());
         }
         return MapstructUtils.convert(add, TestLeaveVo.class);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public TestLeaveVo submitAndFlowStart(TestLeaveBo bo) {
+        long day = DateUtil.betweenDay(bo.getStartDate(), bo.getEndDate(), true);
+        // 截止日期也算一天
+        bo.setLeaveDays((int) day + 1);
+        TestLeave leave = MapstructUtils.convert(bo, TestLeave.class);
+        boolean flag = baseMapper.insertOrUpdate(leave);
+        if (flag) {
+            bo.setId(leave.getId());
+            // 后端发起需要忽略权限
+            bo.getParams().put("ignore", true);
+            StartProcessReturnDTO result = workflowService.startWorkFlow(new StartProcessDTO() {{
+                setBusinessId(leave.getId().toString());
+                setFlowCode(StringUtils.isEmpty(bo.getFlowCode()) ? "leave1" : bo.getFlowCode());
+                setVariables(bo.getParams());
+            }});
+            boolean flag1 = workflowService.completeTask(new CompleteTaskDTO() {{
+                setTaskId(result.getTaskId());
+                setMessageType(List.of("1"));
+                setVariables(bo.getParams());
+            }});
+            if (!flag1) {
+                throw new ServiceException("流程发起异常");
+            }
+        }
+        return MapstructUtils.convert(leave, TestLeaveVo.class);
     }
 
     /**
