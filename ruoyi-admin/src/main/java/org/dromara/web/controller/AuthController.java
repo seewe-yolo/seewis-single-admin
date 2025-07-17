@@ -21,6 +21,8 @@ import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.core.utils.ValidatorUtils;
 import org.dromara.common.encrypt.annotation.ApiEncrypt;
 import org.dromara.common.json.utils.JsonUtils;
+import org.dromara.common.ratelimiter.annotation.RateLimiter;
+import org.dromara.common.ratelimiter.enums.LimitType;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.common.social.config.properties.SocialLoginConfigProperties;
 import org.dromara.common.social.config.properties.SocialProperties;
@@ -185,6 +187,7 @@ public class AuthController {
     /**
      * 登录页面租户下拉框（兼容多租户前端）
      */
+    @RateLimiter(time = 60, count = 20, limitType = LimitType.IP)
     @GetMapping("/tenant/list")
     public R<TenantListVo> tenantList() {
         return R.ok(TenantListVo.DISABLED_TENANT);
