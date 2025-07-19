@@ -17,7 +17,7 @@ spring:
 --- # snail-job 服务端配置
 snail-job:
   # 服务端节点IP(默认按照`NetUtil.getLocalIpStr()`)
-  server-host: 127.0.0.1
+  server-host:
   # 服务端netty的端口号
   server-port: 17888
   # 合并日志默认保存天数
