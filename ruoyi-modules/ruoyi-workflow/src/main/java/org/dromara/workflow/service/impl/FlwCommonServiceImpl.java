@@ -55,6 +55,19 @@ public class FlwCommonServiceImpl implements IFlwCommonService {
         if (CollUtil.isEmpty(userList)) {
             return;
         }
+        sendMessage(messageType, message, "单据审批提醒", userList);
+    }
+
+    /**
+     * 发送消息
+     *
+     * @param messageType 消息类型
+     * @param message     消息内容
+     * @param subject     邮件标题
+     * @param userList    接收用户
+     */
+    @Override
+    public void sendMessage(List<String> messageType, String message, String subject, List<UserDTO> userList) {
         for (String code : messageType) {
             MessageTypeEnum messageTypeEnum = MessageTypeEnum.getByCode(code);
             if (ObjectUtil.isEmpty(messageTypeEnum)) {
@@ -68,7 +81,7 @@ public class FlwCommonServiceImpl implements IFlwCommonService {
                     SseMessageUtils.publishMessage(dto);
                 }
                 case EMAIL_MESSAGE -> {
-                    MailUtils.sendText(StreamUtils.join(userList, UserDTO::getEmail), "单据审批提醒", message);
+                    MailUtils.sendText(StreamUtils.join(userList, UserDTO::getEmail), subject, message);
                 }
                 case SMS_MESSAGE -> {
                     //todo 短信发送
@@ -76,7 +89,6 @@ public class FlwCommonServiceImpl implements IFlwCommonService {
                 default -> throw new IllegalStateException("Unexpected value: " + messageTypeEnum);
             }
         }
-
     }
 
 
