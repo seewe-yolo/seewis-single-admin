@@ -371,6 +371,9 @@ public class FlwInstanceServiceImpl implements IFlwInstanceService {
         }
         try {
             Map<String, Object> variableMap = new HashMap<>(Optional.ofNullable(flowInstance.getVariableMap()).orElse(Collections.emptyMap()));
+            if (!variableMap.containsKey(bo.getKey())) {
+                log.error("变量不存在: {}", bo.getKey());
+            }
             variableMap.put(bo.getKey(), bo.getValue());
             flowInstance.setVariable(FlowEngine.jsonConvert.objToStr(variableMap));
             flowInstanceMapper.updateById(flowInstance);
