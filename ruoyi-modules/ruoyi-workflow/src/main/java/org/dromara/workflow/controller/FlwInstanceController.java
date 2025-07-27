@@ -90,6 +90,16 @@ public class FlwInstanceController extends BaseController {
     }
 
     /**
+     * 按照实例id删除已完成得流程实例
+     *
+     * @param instanceIds 实例id
+     */
+    @DeleteMapping("/deleteHisByInstanceIds/{instanceIds}")
+    public R<Void> deleteHisByInstanceIds(@PathVariable List<Long> instanceIds) {
+        return toAjax(flwInstanceService.deleteHisByInstanceIds(instanceIds));
+    }
+
+    /**
      * 撤销流程
      *
      * @param bo 参数
