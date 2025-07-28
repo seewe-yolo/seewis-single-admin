@@ -119,6 +119,12 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
             dto.setTaskId(taskList.get(0).getId());
             return dto;
         }
+        // 将流程定义内的扩展参数设置到变量中
+        Definition definition = FlowEngine.defService().getPublishByFlowCode(startProcessBo.getFlowCode());
+        Dict dict = JsonUtils.parseMap(definition.getExt());
+        boolean autoPass = !ObjectUtil.isNull(dict) && dict.getBool(FlowConstant.AUTO_PASS);
+        variables.put(FlowConstant.AUTO_PASS, autoPass);
+
         FlowParams flowParams = FlowParams.build()
             .flowCode(startProcessBo.getFlowCode())
             .variable(startProcessBo.getVariables())
@@ -156,11 +162,12 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
             // 获取抄送人
             List<FlowCopyBo> flowCopyList = completeTaskBo.getFlowCopyList();
             // 设置抄送人
-            completeTaskBo.getVariables().put(FlowConstant.FLOW_COPY_LIST, flowCopyList);
+            Map<String, Object> variables = completeTaskBo.getVariables();
+            variables.put(FlowConstant.FLOW_COPY_LIST, flowCopyList);
             // 消息类型
-            completeTaskBo.getVariables().put(FlowConstant.MESSAGE_TYPE, messageType);
+            variables.put(FlowConstant.MESSAGE_TYPE, messageType);
             // 消息通知
-            completeTaskBo.getVariables().put(FlowConstant.MESSAGE_NOTICE, notice);
+            variables.put(FlowConstant.MESSAGE_NOTICE, notice);
 
 
             FlowTask flowTask = flowTaskMapper.selectById(taskId);
@@ -168,25 +175,25 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
                 throw new ServiceException("流程任务不存在或任务已审批！");
             }
             Instance ins = insService.getById(flowTask.getInstanceId());
-            FlowDefinition flowDefinition = flowDefinitionMapper.selectOne(new LambdaQueryWrapper<>(FlowDefinition.class).eq(FlowDefinition::getId, ins.getDefinitionId()));
             // 检查流程状态是否为草稿、已撤销或已退回状态，若是则执行流程提交监听
             if (BusinessStatusEnum.isDraftOrCancelOrBack(ins.getFlowStatus())) {
-                completeTaskBo.getVariables().put(FlowConstant.SUBMIT, true);
+                variables.put(FlowConstant.SUBMIT, true);
             }
             // 设置弹窗处理人
             Map<String, Object> assigneeMap = setPopAssigneeMap(completeTaskBo.getAssigneeMap(), ins.getVariableMap());
             if (CollUtil.isNotEmpty(assigneeMap)) {
-                completeTaskBo.getVariables().putAll(assigneeMap);
+                variables.putAll(assigneeMap);
             }
             // 构建流程参数，包括变量、跳转类型、消息、处理人、权限等信息
             FlowParams flowParams = FlowParams.build()
-                .variable(completeTaskBo.getVariables())
+                .variable(variables)
                 .skipType(SkipType.PASS.getKey())
                 .message(completeTaskBo.getMessage())
                 .flowStatus(BusinessStatusEnum.WAITING.getStatus())
                 .hisStatus(TaskStatusEnum.PASS.getStatus())
                 .hisTaskExt(completeTaskBo.getFileId());
-            skipTask(taskId, flowParams, flowTask.getInstanceId(), flowDefinition);
+            Boolean autoPass = Convert.toBool(variables.getOrDefault(AUTO_PASS, false));
+            skipTask(taskId, flowParams, flowTask.getInstanceId(), autoPass);
             return true;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -200,9 +207,9 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
      * @param taskId         任务ID
      * @param flowParams     参数
      * @param instanceId     实例ID
-     * @param flowDefinition 流程定义
+     * @param autoPass       自动审批
      */
-    private void skipTask(Long taskId, FlowParams flowParams, Long instanceId, FlowDefinition flowDefinition) {
+    private void skipTask(Long taskId, FlowParams flowParams, Long instanceId, Boolean autoPass) {
         // 执行任务跳转，并根据返回的处理人设置下一步处理人
         taskService.skip(taskId, flowParams);
         List<FlowTask> flowTaskList = selectByInstId(instanceId);
@@ -214,10 +221,7 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
         if (CollUtil.isEmpty(userList)) {
             return;
         }
-        Dict dict = JsonUtils.parseMap(flowDefinition.getExt());
         for (FlowTask task : flowTaskList) {
-            //自动审批
-            boolean autoPass = !ObjectUtil.isNull(dict) && dict.getBool(FlowConstant.AUTO_PASS);
             if (!task.getId().equals(taskId) && autoPass) {
                 List<User> users = StreamUtils.filter(userList, e -> ObjectUtil.equals(task.getId(), e.getAssociated()) && ObjectUtil.equal(e.getProcessedBy(), LoginHelper.getUserIdStr()));
                 if (CollUtil.isEmpty(users)) {
@@ -229,7 +233,7 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
                         FlowConstant.SUBMIT, false,
                         FlowConstant.FLOW_COPY_LIST, Collections.emptyList(),
                         FlowConstant.MESSAGE_NOTICE, StringUtils.EMPTY));
-                skipTask(task.getId(), flowParams, instanceId, flowDefinition);
+                skipTask(task.getId(), flowParams, instanceId, true);
             }
         }
     }
