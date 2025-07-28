@@ -178,7 +178,13 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
                 completeTaskBo.getVariables().putAll(assigneeMap);
             }
             // 构建流程参数，包括变量、跳转类型、消息、处理人、权限等信息
-            FlowParams flowParams = FlowParams.build().variable(completeTaskBo.getVariables()).skipType(SkipType.PASS.getKey()).message(completeTaskBo.getMessage()).flowStatus(BusinessStatusEnum.WAITING.getStatus()).hisStatus(TaskStatusEnum.PASS.getStatus()).hisTaskExt(completeTaskBo.getFileId());
+            FlowParams flowParams = FlowParams.build()
+                .variable(completeTaskBo.getVariables())
+                .skipType(SkipType.PASS.getKey())
+                .message(completeTaskBo.getMessage())
+                .flowStatus(BusinessStatusEnum.WAITING.getStatus())
+                .hisStatus(TaskStatusEnum.PASS.getStatus())
+                .hisTaskExt(completeTaskBo.getFileId());
             skipTask(taskId, flowParams, flowTask.getInstanceId(), flowDefinition);
             return true;
         } catch (Exception e) {
@@ -202,14 +208,15 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
         if (CollUtil.isEmpty(flowTaskList)) {
             return;
         }
-        List<User> userList = FlowEngine.userService().getByAssociateds(StreamUtils.toList(flowTaskList, FlowTask::getId));
+        List<User> userList = FlowEngine.userService()
+            .getByAssociateds(StreamUtils.toList(flowTaskList, FlowTask::getId));
         if (CollUtil.isEmpty(userList)) {
             return;
         }
         Dict dict = JsonUtils.parseMap(flowDefinition.getExt());
         for (FlowTask task : flowTaskList) {
             //自动审批
-            boolean autoPass = !ObjectUtil.isNull(dict) && cn.hutool.core.map.MapUtil.getBool(dict, AUTO_PASS);
+            boolean autoPass = !ObjectUtil.isNull(dict) && dict.getBool(FlowConstant.AUTO_PASS);
             if (!task.getId().equals(taskId) && autoPass) {
                 List<User> users = StreamUtils.filter(userList, e -> ObjectUtil.equals(task.getId(), e.getAssociated()) && ObjectUtil.equal(e.getProcessedBy(), LoginHelper.getUserIdStr()));
                 if (CollUtil.isEmpty(users)) {
@@ -269,7 +276,9 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
             return;
         }
         // 添加抄送人记录
-        FlowHisTask flowHisTask = flowHisTaskMapper.selectList(new LambdaQueryWrapper<>(FlowHisTask.class).eq(FlowHisTask::getTaskId, task.getId())).get(0);
+        FlowHisTask flowHisTask = flowHisTaskMapper.selectList(
+            new LambdaQueryWrapper<>(FlowHisTask.class)
+                .eq(FlowHisTask::getTaskId, task.getId())).get(0);
         FlowNode flowNode = new FlowNode();
         flowNode.setNodeCode(flowHisTask.getTargetNodeCode());
         flowNode.setNodeName(flowHisTask.getTargetNodeName());
@@ -278,12 +287,19 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
         task.setId(taskId);
         task.setNodeName("【抄送】" + task.getNodeName());
         Date updateTime = new Date(flowHisTask.getUpdateTime().getTime() - 1000);
-        FlowParams flowParams = FlowParams.build().skipType(SkipType.NONE.getKey()).hisStatus(TaskStatusEnum.COPY.getStatus()).message("【抄送给】" + StreamUtils.join(flowCopyList, FlowCopyBo::getUserName));
+        FlowParams flowParams = FlowParams.build()
+            .skipType(SkipType.NONE.getKey())
+            .hisStatus(TaskStatusEnum.COPY.getStatus())
+            .message("【抄送给】" + StreamUtils.join(flowCopyList, FlowCopyBo::getUserName));
         HisTask hisTask = hisTaskService.setSkipHisTask(task, flowNode, flowParams);
         hisTask.setCreateTime(updateTime);
         hisTask.setUpdateTime(updateTime);
         hisTaskService.save(hisTask);
-        List<User> userList = StreamUtils.toList(flowCopyList, x -> new FlowUser().setType(TaskAssigneeType.COPY.getCode()).setProcessedBy(String.valueOf(x.getUserId())).setAssociated(taskId));
+        List<User> userList = StreamUtils.toList(flowCopyList, x ->
+            new FlowUser()
+                .setType(TaskAssigneeType.COPY.getCode())
+                .setProcessedBy(String.valueOf(x.getUserId()))
+                .setAssociated(taskId));
         // 批量保存抄送人员
         FlowEngine.userService().saveBatch(userList);
     }
@@ -423,7 +439,14 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
             // 消息通知
             variable.put("notice", notice);
 
-            FlowParams flowParams = FlowParams.build().nodeCode(bo.getNodeCode()).variable(variable).message(message).skipType(SkipType.REJECT.getKey()).flowStatus(applyNodeCode.equals(bo.getNodeCode()) ? TaskStatusEnum.BACK.getStatus() : TaskStatusEnum.WAITING.getStatus()).hisStatus(TaskStatusEnum.BACK.getStatus()).hisTaskExt(bo.getFileId());
+            FlowParams flowParams = FlowParams.build()
+                .nodeCode(bo.getNodeCode())
+                .variable(variable)
+                .message(message)
+                .skipType(SkipType.REJECT.getKey())
+                .flowStatus(applyNodeCode.equals(bo.getNodeCode()) ? TaskStatusEnum.BACK.getStatus() : TaskStatusEnum.WAITING.getStatus())
+                .hisStatus(TaskStatusEnum.BACK.getStatus())
+                .hisTaskExt(bo.getFileId());
             taskService.skip(task.getId(), flowParams);
             return true;
         } catch (Exception e) {
@@ -475,7 +498,10 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
             if (ObjectUtil.isNotNull(instance)) {
                 BusinessStatusEnum.checkInvalidStatus(instance.getFlowStatus());
             }
-            FlowParams flowParams = FlowParams.build().message(bo.getComment()).flowStatus(BusinessStatusEnum.TERMINATION.getStatus()).hisStatus(TaskStatusEnum.TERMINATION.getStatus());
+            FlowParams flowParams = FlowParams.build()
+                .message(bo.getComment())
+                .flowStatus(BusinessStatusEnum.TERMINATION.getStatus())
+                .hisStatus(TaskStatusEnum.TERMINATION.getStatus());
             taskService.termination(taskId, flowParams);
             return true;
         } catch (Exception e) {
@@ -548,15 +574,14 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
             //办理人变量替换
             ExpressionUtil.evalVariable(buildNextTaskList, FlowParams.build().variable(mergeVariable));
             for (FlowNode flowNode : nextFlowNodes) {
-                Optional<Task> first = buildNextTaskList.stream().filter(t -> t.getNodeCode().equals(flowNode.getNodeCode())).findFirst();
-                first.ifPresent(t -> {
-                    if (CollUtil.isNotEmpty(t.getPermissionList())) {
-                        List<UserDTO> users = flwTaskAssigneeService.fetchUsersByStorageIds(String.join(StringUtils.SEPARATOR, t.getPermissionList()));
-                        if (CollUtil.isNotEmpty(users)) {
-                            flowNode.setPermissionFlag(StreamUtils.join(users, e -> String.valueOf(e.getUserId())));
-                        }
+                Task first = StreamUtils.findFirst(buildNextTaskList, t -> t.getNodeCode().equals(flowNode.getNodeCode()));
+                if (ObjectUtil.isNotNull(first) && CollUtil.isNotEmpty(first.getPermissionList())) {
+                    List<UserDTO> users = flwTaskAssigneeService.fetchUsersByStorageIds(String.join(StringUtils.SEPARATOR, first.getPermissionList()));
+                    if (CollUtil.isNotEmpty(users)) {
+                        flowNode.setPermissionFlag(StreamUtils.join(users, e -> String.valueOf(e.getUserId())));
                     }
-                });
+                }
+
             }
         }
         return nextFlowNodes;
@@ -693,7 +718,11 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
             // 批量删除现有任务的办理人记录
             if (CollUtil.isNotEmpty(flowTasks)) {
                 FlowEngine.userService().deleteByTaskIds(StreamUtils.toList(flowTasks, FlowTask::getId));
-                List<User> userList = StreamUtils.toList(flowTasks, flowTask -> new FlowUser().setType(TaskAssigneeType.APPROVER.getCode()).setProcessedBy(userId).setAssociated(flowTask.getId()));
+                List<User> userList = StreamUtils.toList(flowTasks, flowTask ->
+                    new FlowUser()
+                        .setType(TaskAssigneeType.APPROVER.getCode())
+                        .setProcessedBy(userId)
+                        .setAssociated(flowTask.getId()));
                 if (CollUtil.isNotEmpty(userList)) {
                     FlowEngine.userService().saveBatch(userList);
                 }
@@ -728,7 +757,9 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
      */
     @Override
     public FlowNode getByNodeCode(String nodeCode, Long definitionId) {
-        return flowNodeMapper.selectOne(new LambdaQueryWrapper<FlowNode>().eq(FlowNode::getNodeCode, nodeCode).eq(FlowNode::getDefinitionId, definitionId));
+        return flowNodeMapper.selectOne(new LambdaQueryWrapper<FlowNode>()
+            .eq(FlowNode::getNodeCode, nodeCode)
+            .eq(FlowNode::getDefinitionId, definitionId));
     }
 
     /**
