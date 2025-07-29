@@ -17,8 +17,10 @@ import org.dromara.common.mybatis.handler.PlusPostInitTableInfoHandler;
 import org.dromara.common.mybatis.interceptor.PlusDataPermissionInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Role;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
@@ -26,6 +28,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  *
  * @author Lion Li
  */
+@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 @EnableTransactionManagement(proxyTargetClass = true)
 @MapperScan("${mybatis-plus.mapperPackage}")
 @PropertySource(value = "classpath:common-mybatis.yml", factory = YmlPropertySourceFactory.class)
@@ -54,6 +57,7 @@ public class MybatisPlusConfig {
      * 数据权限切面处理器
      */
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public DataPermissionPointcutAdvisor dataPermissionPointcutAdvisor() {
         return new DataPermissionPointcutAdvisor();
     }
