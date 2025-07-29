@@ -1,11 +1,8 @@
 package org.dromara.common.mybatis.aspect;
 
 import org.aopalliance.aop.Advice;
-import org.dromara.common.mybatis.annotation.DataPermission;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.support.AbstractPointcutAdvisor;
-import org.springframework.aop.support.ComposablePointcut;
-import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
 
 /**
  * 数据权限注解切面定义
@@ -20,9 +17,7 @@ public class DataPermissionPointcutAdvisor extends AbstractPointcutAdvisor {
 
     public DataPermissionPointcutAdvisor() {
         this.advice = new DataPermissionAdvice();
-        AnnotationMatchingPointcut matchingPointcut = new AnnotationMatchingPointcut(DataPermission.class, true);
-        DataPermissionDynamicMethodMatcher matcher = new DataPermissionDynamicMethodMatcher();
-        this.pointcut =  new ComposablePointcut(matcher).union(matchingPointcut);
+        this.pointcut =  new DataPermissionPointcut();
     }
 
     @Override

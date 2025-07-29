@@ -2,21 +2,19 @@ package org.dromara.common.mybatis.aspect;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.mybatis.annotation.DataPermission;
-import org.springframework.aop.support.DynamicMethodMatcher;
+import org.springframework.aop.support.StaticMethodMatcherPointcut;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
- * 数据权限动态方法匹配器
+ * 数据权限匹配切点
  *
  * @author 秋辞未寒
  */
 @Slf4j
 @SuppressWarnings("all")
-public class DataPermissionDynamicMethodMatcher extends DynamicMethodMatcher {
-
-    public DataPermissionDynamicMethodMatcher() {}
+public class DataPermissionPointcut extends StaticMethodMatcherPointcut {
 
     @Override
     public boolean matches(Method method, Class<?> targetClass) {
@@ -36,11 +34,6 @@ public class DataPermissionDynamicMethodMatcher extends DynamicMethodMatcher {
 
         }
         return targetClassRef.isAnnotationPresent(DataPermission.class);
-    }
-
-    @Override
-    public boolean matches(Method method, Class<?> targetClass, Object... args) {
-        return matches(method, targetClass);
     }
 
 }
