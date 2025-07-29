@@ -1,4 +1,4 @@
-package org.dromara.common.mybatis.aop;
+package org.dromara.common.mybatis.aspect;
 
 import org.aopalliance.aop.Advice;
 import org.dromara.common.mybatis.annotation.DataPermission;

@@ -1,4 +1,4 @@
-package org.dromara.common.mybatis.aop;
+package org.dromara.common.mybatis.aspect;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInterceptor;
