@@ -57,6 +57,11 @@ spring:
     # 开启虚拟线程 仅jdk21可用
     virtual:
       enabled: false
+  task:
+    execution:
+      # 从 springboot 3.5 开始 spring自带线程池
+      # 不再需要 AsyncConfig与ThreadPoolConfig 可直接注入线程池使用
+      thread-name-prefix: async-
   # 资源信息
   messages:
     # 国际化资源文件路径
@@ -193,16 +198,6 @@ xss:
   # 排除链接
   excludeUrls:
     - /system/notice
-
-# 全局线程池相关配置
-# 如使用JDK21请直接使用虚拟线程 不要开启此配置
-thread-pool:
-  # 是否开启线程池
-  enabled: false
-  # 队列最大长度
-  queueCapacity: 128
-  # 线程池维护线程所允许的空闲时间
-  keepAliveSeconds: 300
 
 --- # 分布式锁 lock4j 全局配置
 lock4j:
