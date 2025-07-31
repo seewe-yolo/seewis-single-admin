@@ -169,7 +169,8 @@ public class LoginHelper {
      */
     public static boolean isLogin() {
         try {
-            return getLoginUser() != null;
+            StpUtil.checkLogin();
+            return true;
         } catch (Exception e) {
             return false;
         }
