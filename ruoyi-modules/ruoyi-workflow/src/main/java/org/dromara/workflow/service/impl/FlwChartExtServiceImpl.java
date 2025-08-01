@@ -12,7 +12,6 @@ import org.dromara.common.core.service.DeptService;
 import org.dromara.common.core.service.DictService;
 import org.dromara.common.core.service.UserService;
 import org.dromara.common.core.utils.DateUtils;
-import org.dromara.common.core.utils.ServletUtils;
 import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.warm.flow.core.dto.DefJson;
@@ -57,12 +56,8 @@ public class FlwChartExtServiceImpl implements ChartExtService {
      */
     @Override
     public void execute(DefJson defJson) {
-        // 临时修复 后续版本将通过defjson获取流程实例ID
-        String[] parts = ServletUtils.getRequest().getRequestURI().split("/");
-        Long instanceId = Convert.toLong(parts[parts.length - 1]);
-
         // 根据流程实例ID查询所有相关的历史任务列表
-        List<FlowHisTask> flowHisTasks = this.getHisTaskGroupedByNode(instanceId);
+        List<FlowHisTask> flowHisTasks = this.getHisTaskGroupedByNode(defJson.getInstance().getId());
         if (CollUtil.isEmpty(flowHisTasks)) {
             return;
         }
@@ -143,7 +138,8 @@ public class FlwChartExtServiceImpl implements ChartExtService {
                         "fontSize", "14px",
                         "zIndex", "1000",
                         "maxWidth", "500px",
-                        "overflowY", "visible",
+                        "maxHeight", "300px",
+                        "overflowY", "auto",
                         "overflowX", "hidden",
                         "color", "#333",
                         "pointerEvents", "auto",
