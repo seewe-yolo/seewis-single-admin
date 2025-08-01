@@ -162,7 +162,7 @@ public class FlwSpelServiceImpl implements IFlwSpelService {
         TableDataInfo<FlowSpelVo> page = this.queryPageList(bo, pageQuery);
         // 使用封装的字段映射方法进行转换
         List<TaskAssigneeDTO.TaskHandler> handlers = TaskAssigneeDTO.convertToHandlerList(page.getRows(),
-            FlowSpelVo::getViewSpel, c -> "", FlowSpelVo::getRemark, null, FlowSpelVo::getCreateTime);
+            FlowSpelVo::getViewSpel, item -> "", FlowSpelVo::getRemark, item -> "", FlowSpelVo::getCreateTime);
         return new TaskAssigneeDTO(page.getTotal(), handlers);
     }
 
@@ -182,7 +182,9 @@ public class FlwSpelServiceImpl implements IFlwSpelService {
                 .select(FlowSpel::getViewSpel, FlowSpel::getRemark)
                 .in(FlowSpel::getViewSpel, viewSpels)
         );
-        return StreamUtils.toMap(list, FlowSpel::getViewSpel, FlowSpel::getRemark);
+        return StreamUtils.toMap(list, FlowSpel::getViewSpel, x ->
+            StringUtils.isEmpty(x.getRemark()) ? "" : x.getRemark()
+        );
     }
 
 }
