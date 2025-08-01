@@ -149,9 +149,9 @@ public class FlwTaskAssigneeServiceImpl implements IFlwTaskAssigneeService, Hand
      */
     private TreeFunDto<DeptDTO> buildDeptTree(List<DeptDTO> depts) {
         return new TreeFunDto<>(depts)
-            .setId(dept -> String.valueOf(dept.getDeptId()))
+            .setId(dept -> Convert.toStr(dept.getDeptId()))
             .setName(DeptDTO::getDeptName)
-            .setParentId(dept -> String.valueOf(dept.getParentId()));
+            .setParentId(dept -> Convert.toStr(dept.getParentId()));
     }
 
     /**

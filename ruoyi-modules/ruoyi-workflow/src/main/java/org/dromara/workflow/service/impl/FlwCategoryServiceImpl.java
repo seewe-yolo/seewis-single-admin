@@ -1,6 +1,7 @@
 package org.dromara.workflow.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.tree.Tree;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -97,11 +98,11 @@ public class FlwCategoryServiceImpl implements IFlwCategoryService {
         }
         return TreeBuildUtils.buildMultiRoot(
             categoryList,
-            node -> String.valueOf(node.getCategoryId()),
-            node -> String.valueOf(node.getParentId()),
+            node -> Convert.toStr(node.getCategoryId()),
+            node -> Convert.toStr(node.getParentId()),
             (node, treeNode) -> treeNode
-                .setId(String.valueOf(node.getCategoryId()))
-                .setParentId(String.valueOf(node.getParentId()))
+                .setId(Convert.toStr(node.getCategoryId()))
+                .setParentId(Convert.toStr(node.getParentId()))
                 .setName(node.getCategoryName())
                 .setWeight(node.getOrderNum())
         );
