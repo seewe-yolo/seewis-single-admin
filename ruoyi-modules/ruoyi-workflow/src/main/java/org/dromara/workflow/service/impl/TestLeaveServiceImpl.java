@@ -131,14 +131,11 @@ public class TestLeaveServiceImpl implements ITestLeaveService {
             bo.setId(leave.getId());
             // 后端发起需要忽略权限
             bo.getParams().put("ignore", true);
-            StartProcessReturnDTO result = workflowService.startWorkFlow(new StartProcessDTO() {{
+
+
+            boolean flag1 = workflowService.startCompleteTask(new StartProcessDTO() {{
                 setBusinessId(leave.getId().toString());
                 setFlowCode(StringUtils.isEmpty(bo.getFlowCode()) ? "leave1" : bo.getFlowCode());
-                setVariables(bo.getParams());
-            }});
-            boolean flag1 = workflowService.completeTask(new CompleteTaskDTO() {{
-                setTaskId(result.getTaskId());
-                setMessageType(List.of("1"));
                 setVariables(bo.getParams());
             }});
             if (!flag1) {
