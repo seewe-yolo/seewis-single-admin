@@ -151,10 +151,6 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Transactional(rollbackFor = Exception.class)
     public boolean startCompleteTask(StartProcessDTO startProcess) {
         try {
-            StartProcessReturnDTO startWorkFlow = flwTaskService.startWorkFlow(BeanUtil.toBean(startProcess, StartProcessBo.class));
-            CompleteTaskBo completeTask = new CompleteTaskBo();
-            completeTask.setTaskId(startWorkFlow.getTaskId());
-            completeTask.setMessageType(Collections.singletonList(MessageTypeEnum.SYSTEM_MESSAGE.getCode()));
             StartProcessReturnDTO result = flwTaskService.startWorkFlow(new StartProcessBo() {{
                 setBusinessId(startProcess.getBusinessId());
                 setFlowCode(startProcess.getFlowCode());
