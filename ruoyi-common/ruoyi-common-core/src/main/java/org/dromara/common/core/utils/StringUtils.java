@@ -361,15 +361,24 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
             return input;
         }
     }
-
     /**
-     * 以逗号拼接元素
+     * 将可迭代对象中的元素使用逗号拼接成字符串
      *
-     * @param iterable 可迭代对象
+     * @param iterable 可迭代对象，如 List、Set 等
      * @return 拼接后的字符串
      */
     public static String joinComma(Iterable<?> iterable) {
         return StringUtils.join(iterable, SEPARATOR);
+    }
+
+    /**
+     * 将数组中的元素使用逗号拼接成字符串
+     *
+     * @param array 任意类型的数组
+     * @return 拼接后的字符串
+     */
+    public static String joinComma(Object[] array) {
+        return StringUtils.join(array, SEPARATOR);
     }
 
 }
