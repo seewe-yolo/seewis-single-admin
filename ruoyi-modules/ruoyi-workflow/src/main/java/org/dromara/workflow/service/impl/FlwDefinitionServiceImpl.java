@@ -123,7 +123,7 @@ public class FlwDefinitionServiceImpl implements IFlwDefinitionService {
                 }
             }
             if (CollUtil.isNotEmpty(errorMsg)) {
-                throw new ServiceException("节点【" + StringUtils.join(errorMsg, ",") + "】未配置办理人!");
+                throw new ServiceException("节点【{}】未配置办理人!", String.join(",", errorMsg));
             }
         }
         return defService.publish(id);
@@ -183,7 +183,7 @@ public class FlwDefinitionServiceImpl implements IFlwDefinitionService {
             if (CollUtil.isNotEmpty(flowDefinitions)) {
                 String join = StreamUtils.join(flowDefinitions, FlowDefinition::getFlowCode);
                 log.info("流程定义【{}】已被使用不可被删除！", join);
-                throw new ServiceException("流程定义【" + join + "】已被使用不可被删除！");
+                throw new ServiceException("流程定义【{}】已被使用不可被删除！", join);
             }
         }
         try {

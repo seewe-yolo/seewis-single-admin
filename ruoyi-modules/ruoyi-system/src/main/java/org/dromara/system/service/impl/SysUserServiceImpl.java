@@ -353,7 +353,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         // 防止错误更新后导致的数据误删除
         int flag = baseMapper.updateById(sysUser);
         if (flag < 1) {
-            throw new ServiceException("修改用户" + user.getUserName() + "信息失败");
+            throw new ServiceException("修改用户{}信息失败", user.getUserName());
         }
         return flag;
     }

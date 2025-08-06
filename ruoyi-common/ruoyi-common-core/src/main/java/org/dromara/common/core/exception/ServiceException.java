@@ -1,5 +1,6 @@
 package org.dromara.common.core.exception;
 
+import cn.hutool.core.text.StrFormatter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,7 +9,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serial;
 
 /**
- * 业务异常
+ * 业务异常（支持占位符 {} ）
  *
  * @author ruoyi
  */
@@ -43,6 +44,10 @@ public final class ServiceException extends RuntimeException {
     public ServiceException(String message, Integer code) {
         this.message = message;
         this.code = code;
+    }
+
+    public ServiceException(String message, Object... args) {
+        this.message = StrFormatter.format(message, args);
     }
 
     @Override
