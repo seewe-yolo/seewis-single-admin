@@ -116,7 +116,7 @@ public class SysOssServiceImpl implements ISysOssService, OssService {
                 }
             }
         }
-        return String.join(StringUtils.SEPARATOR, list);
+        return StringUtils.joinComma(list);
     }
 
     @Override

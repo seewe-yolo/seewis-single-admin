@@ -621,7 +621,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
                 list.add(nickname);
             }
         }
-        return String.join(StringUtils.SEPARATOR, list);
+        return StringUtils.joinComma(list);
     }
 
     /**

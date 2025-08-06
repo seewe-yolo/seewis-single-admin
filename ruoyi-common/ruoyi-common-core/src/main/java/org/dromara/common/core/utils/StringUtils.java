@@ -362,4 +362,14 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         }
     }
 
+    /**
+     * 以逗号拼接元素
+     *
+     * @param iterable 可迭代对象
+     * @return 拼接后的字符串
+     */
+    public static String joinComma(Iterable<?> iterable) {
+        return StringUtils.join(iterable, SEPARATOR);
+    }
+
 }

@@ -192,7 +192,7 @@ public class SysDeptServiceImpl implements ISysDeptService, DeptService {
                 list.add(vo.getDeptName());
             }
         }
-        return String.join(StringUtils.SEPARATOR, list);
+        return StringUtils.joinComma(list);
     }
 
     /**

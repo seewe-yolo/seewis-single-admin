@@ -260,7 +260,7 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
                     List<String> variableUserIds = Arrays.asList(userIds.split(StringUtils.SEPARATOR));
                     hashSet.addAll(popUserIds);
                     hashSet.addAll(variableUserIds);
-                    map.put(entry.getKey(), String.join(StringUtils.SEPARATOR, hashSet));
+                    map.put(entry.getKey(), StringUtils.joinComma(hashSet));
                 }
             } else {
                 map.put(entry.getKey(), entry.getValue());
@@ -587,7 +587,7 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
             for (FlowNode flowNode : nextFlowNodes) {
                 Task first = StreamUtils.findFirst(buildNextTaskList, t -> t.getNodeCode().equals(flowNode.getNodeCode()));
                 if (ObjectUtil.isNotNull(first) && CollUtil.isNotEmpty(first.getPermissionList())) {
-                    List<UserDTO> users = flwTaskAssigneeService.fetchUsersByStorageIds(String.join(StringUtils.SEPARATOR, first.getPermissionList()));
+                    List<UserDTO> users = flwTaskAssigneeService.fetchUsersByStorageIds(StringUtils.joinComma(first.getPermissionList()));
                     if (CollUtil.isNotEmpty(users)) {
                         flowNode.setPermissionFlag(StreamUtils.join(users, e -> Convert.toStr(e.getUserId())));
                     }
