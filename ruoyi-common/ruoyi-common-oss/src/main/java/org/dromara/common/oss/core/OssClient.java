@@ -2,6 +2,7 @@ package org.dromara.common.oss.core;
 
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.IdUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.core.constant.Constants;
 import org.dromara.common.core.utils.DateUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -41,6 +42,7 @@ import java.util.function.Consumer;
  *
  * @author AprilWind
  */
+@Slf4j
 public class OssClient {
 
     /**
@@ -279,19 +281,19 @@ public class OssClient {
 
             // 构建写出订阅器对象
             return out -> {
-                // 注意，此处不需要显式关闭 channel ，channel 会在 out 关闭时自动关闭
-                WritableByteChannel channel = Channels.newChannel(out);
-
-                // 订阅数据
-                publisher.subscribe(byteBuffer -> {
-                    try {
+                // 创建可写入的字节通道
+                try(WritableByteChannel channel = Channels.newChannel(out)){
+                    // 订阅数据
+                    publisher.subscribe(byteBuffer -> {
                         while (byteBuffer.hasRemaining()) {
-                            channel.write(byteBuffer);
+                            try {
+                                channel.write(byteBuffer);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }).join();
+                    }).join();
+                }
             };
         } catch (Exception e) {
             throw new OssException("文件下载失败，错误信息:[" + e.getMessage() + "]");
