@@ -9,12 +9,10 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.common.core.domain.dto.CompleteTaskDTO;
 import org.dromara.common.core.domain.dto.StartProcessDTO;
-import org.dromara.common.core.domain.dto.StartProcessReturnDTO;
-import org.dromara.common.core.domain.event.ProcessTaskEvent;
 import org.dromara.common.core.domain.event.ProcessDeleteEvent;
 import org.dromara.common.core.domain.event.ProcessEvent;
+import org.dromara.common.core.domain.event.ProcessTaskEvent;
 import org.dromara.common.core.enums.BusinessStatusEnum;
 import org.dromara.common.core.exception.ServiceException;
 import org.dromara.common.core.service.WorkflowService;
@@ -132,12 +130,14 @@ public class TestLeaveServiceImpl implements ITestLeaveService {
             // 后端发起需要忽略权限
             bo.getParams().put("ignore", true);
 
+            StartProcessDTO startProcess = new StartProcessDTO();
+            startProcess.setBusinessId(leave.getId().toString());
+            startProcess.setFlowCode(StringUtils.isEmpty(bo.getFlowCode()) ? "leave1" : bo.getFlowCode());
+            startProcess.setVariables(bo.getParams());
+            // 后端发起 如果没有登录用户 比如定时任务 可以手动设置一个处理人id
+            // startProcess.setHandler("0");
 
-            boolean flag1 = workflowService.startCompleteTask(new StartProcessDTO() {{
-                setBusinessId(leave.getId().toString());
-                setFlowCode(StringUtils.isEmpty(bo.getFlowCode()) ? "leave1" : bo.getFlowCode());
-                setVariables(bo.getParams());
-            }});
+            boolean flag1 = workflowService.startCompleteTask(startProcess);
             if (!flag1) {
                 throw new ServiceException("流程发起异常");
             }

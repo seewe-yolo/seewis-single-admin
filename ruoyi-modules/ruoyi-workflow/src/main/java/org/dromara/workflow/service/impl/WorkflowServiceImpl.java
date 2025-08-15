@@ -151,16 +151,20 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Transactional(rollbackFor = Exception.class)
     public boolean startCompleteTask(StartProcessDTO startProcess) {
         try {
-            StartProcessReturnDTO result = flwTaskService.startWorkFlow(new StartProcessBo() {{
-                setBusinessId(startProcess.getBusinessId());
-                setFlowCode(startProcess.getFlowCode());
-                setVariables(startProcess.getVariables());
-            }});
-            boolean flag = flwTaskService.completeTask(new CompleteTaskBo() {{
-                setTaskId(result.getTaskId());
-                setMessageType(Collections.singletonList(MessageTypeEnum.SYSTEM_MESSAGE.getCode()));
-                setVariables(startProcess.getVariables());
-            }});
+            StartProcessBo processBo = new StartProcessBo();
+            processBo.setBusinessId(startProcess.getBusinessId());
+            processBo.setFlowCode(startProcess.getFlowCode());
+            processBo.setVariables(startProcess.getVariables());
+            processBo.setHandler(startProcess.getHandler());
+
+            StartProcessReturnDTO result = flwTaskService.startWorkFlow(processBo);
+            CompleteTaskBo taskBo = new CompleteTaskBo();
+            taskBo.setTaskId(result.getTaskId());
+            taskBo.setMessageType(Collections.singletonList(MessageTypeEnum.SYSTEM_MESSAGE.getCode()));
+            taskBo.setVariables(startProcess.getVariables());
+            taskBo.setHandler(startProcess.getHandler());
+
+            boolean flag = flwTaskService.completeTask(taskBo);
             if (!flag) {
                 throw new ServiceException("流程发起异常");
             }
