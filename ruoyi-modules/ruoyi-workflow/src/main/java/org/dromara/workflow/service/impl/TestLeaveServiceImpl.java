@@ -4,6 +4,7 @@ import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -109,6 +110,7 @@ public class TestLeaveServiceImpl implements ITestLeaveService {
         TestLeave add = MapstructUtils.convert(bo, TestLeave.class);
         if (StringUtils.isBlank(add.getStatus())) {
             add.setStatus(BusinessStatusEnum.DRAFT.getStatus());
+            add.setApplyCode(System.currentTimeMillis() + StrUtil.EMPTY);
         }
         boolean flag = baseMapper.insert(add) > 0;
         if (flag) {
@@ -188,6 +190,10 @@ public class TestLeaveServiceImpl implements ITestLeaveService {
             String message = Convert.toStr(params.get("message"));
         }
         if (processEvent.getSubmit()) {
+            if(StringUtils.isBlank(testLeave.getApplyCode())){
+                String businessCode = MapUtil.getStr(params, "businessCode",StrUtil.EMPTY);
+                testLeave.setApplyCode(businessCode);
+            }
             testLeave.setStatus(BusinessStatusEnum.WAITING.getStatus());
         }
         baseMapper.updateById(testLeave);

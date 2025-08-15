@@ -88,4 +88,8 @@ public interface FlowConstant {
      */
     String AUTO_PASS = "autoPass";
 
+    /**
+     * 业务编码
+     */
+    String BUSINESS_CODE = "businessCode";
 }
