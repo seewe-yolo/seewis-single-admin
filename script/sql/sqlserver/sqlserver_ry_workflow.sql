@@ -1155,7 +1155,9 @@ CREATE TABLE flow_spel (
     create_time DATETIME,
     update_by BIGINT,
     update_time DATETIME,
-    CONSTRAINT PK_flow_spel PRIMARY KEY (id)
+    CONSTRAINT PK__flow_spel__D54EE9B4AE98B9C1 PRIMARY KEY CLUSTERED (id)
+    WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+    ON [PRIMARY]
 );
 GO
 
@@ -1262,8 +1264,8 @@ INSERT flow_spel VALUES (2, NULL, NULL, N'initiator', N'${initiator}', N'流程�
 GO
 
 CREATE TABLE flow_instance_biz_ext (
-   id             BIGINT         NOT NULL PRIMARY KEY,
-   tenant_id      VARCHAR(20)    DEFAULT '000000',
+   id             BIGINT         NOT NULL,
+   tenant_id      VARCHAR(20)    DEFAULT ('000000'),
    create_dept    BIGINT,
    create_by      BIGINT,
    create_time    DATETIME,
@@ -1271,31 +1273,103 @@ CREATE TABLE flow_instance_biz_ext (
    update_time    DATETIME,
    business_code  VARCHAR(255),
    business_title VARCHAR(1000),
-   del_flag       CHAR(1)        DEFAULT '0',
+   del_flag       CHAR(1)        DEFAULT ('0'),
    instance_id    BIGINT,
-   business_id    VARCHAR(255)
+   business_id    VARCHAR(255),
+   CONSTRAINT PK__fi_biz_ext__D54EE9B4AE98B9C1 PRIMARY KEY CLUSTERED (id)
+   WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+   ON [PRIMARY]
 );
 
 EXEC sp_addextendedproperty
-    @name = N'MS_Description',
-    @value = '流程实例业务扩展表',
-    @level0type = N'SCHEMA',
-    @level0name = 'dbo',
-    @level1type = N'TABLE',
-    @level1name = 'flow_instance_biz_ext';
+    'MS_Description', N'流程实例业务扩展表',
+    'SCHEMA', N'dbo',
+    'TABLE', N'flow_instance_biz_ext'
+GO
 
-EXEC sp_addextendedproperty @name = N'MS_Description', @value = 'ID', @level0type = N'SCHEMA', @level0name = 'dbo', @level1type = N'TABLE', @level1name = 'flow_instance_biz_ext', @level2type = N'COLUMN', @level2name = 'id';
-EXEC sp_addextendedproperty @name = N'MS_Description', @value = '租户编号', @level0type = N'SCHEMA', @level0name = 'dbo', @level1type = N'TABLE', @level1name = 'flow_instance_biz_ext', @level2type = N'COLUMN', @level2name = 'tenant_id';
-EXEC sp_addextendedproperty @name = N'MS_Description', @value = '创建部门', @level0type = N'SCHEMA', @level0name = 'dbo', @level1type = N'TABLE', @level1name = 'flow_instance_biz_ext', @level2type = N'COLUMN', @level2name = 'create_dept';
-EXEC sp_addextendedproperty @name = N'MS_Description', @value = '创建者', @level0type = N'SCHEMA', @level0name = 'dbo', @level1type = N'TABLE', @level1name = 'flow_instance_biz_ext', @level2type = N'COLUMN', @level2name = 'create_by';
-EXEC sp_addextendedproperty @name = N'MS_Description', @value = '创建时间', @level0type = N'SCHEMA', @level0name = 'dbo', @level1type = N'TABLE', @level1name = 'flow_instance_biz_ext', @level2type = N'COLUMN', @level2name = 'create_time';
-EXEC sp_addextendedproperty @name = N'MS_Description', @value = '更新者', @level0type = N'SCHEMA', @level0name = 'dbo', @level1type = N'TABLE', @level1name = 'flow_instance_biz_ext', @level2type = N'COLUMN', @level2name = 'update_by';
-EXEC sp_addextendedproperty @name = N'MS_Description', @value = '更新时间', @level0type = N'SCHEMA', @level0name = 'dbo', @level1type = N'TABLE', @level1name = 'flow_instance_biz_ext', @level2type = N'COLUMN', @level2name = 'update_time';
-EXEC sp_addextendedproperty @name = N'MS_Description', @value = '业务编码', @level0type = N'SCHEMA', @level0name = 'dbo', @level1type = N'TABLE', @level1name = 'flow_instance_biz_ext', @level2type = N'COLUMN', @level2name = 'business_code';
-EXEC sp_addextendedproperty @name = N'MS_Description', @value = '业务标题', @level0type = N'SCHEMA', @level0name = 'dbo', @level1type = N'TABLE', @level1name = 'flow_instance_biz_ext', @level2type = N'COLUMN', @level2name = 'business_title';
-EXEC sp_addextendedproperty @name = N'MS_Description', @value = '删除标志（0代表存在 1代表删除）', @level0type = N'SCHEMA', @level0name = 'dbo', @level1type = N'TABLE', @level1name = 'flow_instance_biz_ext', @level2type = N'COLUMN', @level2name = 'del_flag';
-EXEC sp_addextendedproperty @name = N'MS_Description', @value = '流程实例Id', @level0type = N'SCHEMA', @level0name = 'dbo', @level1type = N'TABLE', @level1name = 'flow_instance_biz_ext', @level2type = N'COLUMN', @level2name = 'instance_id';
-EXEC sp_addextendedproperty @name = N'MS_Description', @value = '业务Id', @level0type = N'SCHEMA', @level0name = 'dbo', @level1type = N'TABLE', @level1name = 'flow_instance_biz_ext', @level2type = N'COLUMN', @level2name = 'business_id';
+EXEC sp_addextendedproperty
+    'MS_Description', N'主键id',
+    'SCHEMA', N'dbo',
+    'TABLE', N'flow_instance_biz_ext',
+    'COLUMN', N'id'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'租户编号',
+    'SCHEMA', N'dbo',
+    'TABLE', N'flow_instance_biz_ext',
+    'COLUMN', N'tenant_id'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'创建部门',
+    'SCHEMA', N'dbo',
+    'TABLE', N'flow_instance_biz_ext',
+    'COLUMN', N'create_dept'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'创建者',
+    'SCHEMA', N'dbo',
+    'TABLE', N'flow_instance_biz_ext',
+    'COLUMN', N'create_by'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'创建时间',
+    'SCHEMA', N'dbo',
+    'TABLE', N'flow_instance_biz_ext',
+    'COLUMN', N'create_time'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'更新者',
+    'SCHEMA', N'dbo',
+    'TABLE', N'flow_instance_biz_ext',
+    'COLUMN', N'update_by'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'更新时间',
+    'SCHEMA', N'dbo',
+    'TABLE', N'flow_instance_biz_ext',
+    'COLUMN', N'update_time'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'删除标志',
+    'SCHEMA', N'dbo',
+    'TABLE', N'flow_instance_biz_ext',
+    'COLUMN', N'del_flag'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'业务编码',
+    'SCHEMA', N'dbo',
+    'TABLE', N'flow_instance_biz_ext',
+    'COLUMN', N'business_code'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'业务标题',
+    'SCHEMA', N'dbo',
+    'TABLE', N'flow_instance_biz_ext',
+    'COLUMN', N'business_title'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'流程实例Id',
+    'SCHEMA', N'dbo',
+    'TABLE', N'flow_instance_biz_ext',
+    'COLUMN', N'instance_id'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'业务Id',
+    'SCHEMA', N'dbo',
+    'TABLE', N'flow_instance_biz_ext',
+    'COLUMN', N'business_id'
+GO
 
 CREATE TABLE test_leave (
     id bigint NOT NULL,
