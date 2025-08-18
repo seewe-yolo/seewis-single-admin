@@ -1374,6 +1374,7 @@ GO
 CREATE TABLE test_leave (
     id bigint NOT NULL,
     tenant_id nvarchar(20) DEFAULT('000000') NULL,
+    apply_code nvarchar(50)  NOT NULL,
     leave_type nvarchar(255) NOT NULL,
     start_date datetime2(7) NOT NULL,
     end_date datetime2(7) NOT NULL,
@@ -1404,6 +1405,13 @@ EXEC sp_addextendedproperty
 'SCHEMA', N'dbo',
 'TABLE', N'test_leave',
 'COLUMN', N'tenant_id'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'申请编号',
+'SCHEMA', N'dbo',
+'TABLE', N'test_leave',
+'COLUMN', N'apply_code'
 GO
 
 EXEC sp_addextendedproperty

@@ -282,6 +282,7 @@ COMMENT ON COLUMN flow_user.tenant_id IS '租户id';
 CREATE TABLE flow_category
 (
     category_id   int8         NOT NULL,
+    tenant_id     VARCHAR(20)  DEFAULT '000000'::varchar,
     parent_id     int8         DEFAULT 0,
     ancestors     VARCHAR(500) DEFAULT ''::varchar,
     category_name VARCHAR(30)  NOT NULL,
@@ -297,6 +298,7 @@ CREATE TABLE flow_category
 
 COMMENT ON TABLE flow_category IS '流程分类';
 COMMENT ON COLUMN flow_category.category_id IS '流程分类ID';
+COMMENT ON COLUMN flow_category.tenant_id IS '租户编号';
 COMMENT ON COLUMN flow_category.parent_id IS '父流程分类id';
 COMMENT ON COLUMN flow_category.ancestors IS '祖级列表';
 COMMENT ON COLUMN flow_category.category_name IS '流程分类名称';
@@ -308,16 +310,16 @@ COMMENT ON COLUMN flow_category.create_time IS '创建时间';
 COMMENT ON COLUMN flow_category.update_by IS '更新者';
 COMMENT ON COLUMN flow_category.update_time IS '更新时间';
 
-INSERT INTO flow_category VALUES (100, 0, '0', 'OA审批', 0, '0', 103, 1, now(), NULL, NULL);
-INSERT INTO flow_category VALUES (101, 100, '0,100', '假勤管理', 0, '0', 103, 1, now(), NULL, NULL);
-INSERT INTO flow_category VALUES (102, 100, '0,100', '人事管理', 1, '0', 103, 1, now(), NULL, NULL);
-INSERT INTO flow_category VALUES (103, 101, '0,100,101', '请假', 0, '0', 103, 1, now(), NULL, NULL);
-INSERT INTO flow_category VALUES (104, 101, '0,100,101', '出差', 1, '0', 103, 1, now(), NULL, NULL);
-INSERT INTO flow_category VALUES (105, 101, '0,100,101', '加班', 2, '0', 103, 1, now(), NULL, NULL);
-INSERT INTO flow_category VALUES (106, 101, '0,100,101', '换班', 3, '0', 103, 1, now(), NULL, NULL);
-INSERT INTO flow_category VALUES (107, 101, '0,100,101', '外出', 4, '0', 103, 1, now(), NULL, NULL);
-INSERT INTO flow_category VALUES (108, 102, '0,100,102', '转正', 1, '0', 103, 1, now(), NULL, NULL);
-INSERT INTO flow_category VALUES (109, 102, '0,100,102', '离职', 2, '0', 103, 1, now(), NULL, NULL);
+INSERT INTO flow_category VALUES (100, '000000', 0, '0', 'OA审批', 0, '0', 103, 1, now(), NULL, NULL);
+INSERT INTO flow_category VALUES (101, '000000', 100, '0,100', '假勤管理', 0, '0', 103, 1, now(), NULL, NULL);
+INSERT INTO flow_category VALUES (102, '000000', 100, '0,100', '人事管理', 1, '0', 103, 1, now(), NULL, NULL);
+INSERT INTO flow_category VALUES (103, '000000', 101, '0,100,101', '请假', 0, '0', 103, 1, now(), NULL, NULL);
+INSERT INTO flow_category VALUES (104, '000000', 101, '0,100,101', '出差', 1, '0', 103, 1, now(), NULL, NULL);
+INSERT INTO flow_category VALUES (105, '000000', 101, '0,100,101', '加班', 2, '0', 103, 1, now(), NULL, NULL);
+INSERT INTO flow_category VALUES (106, '000000', 101, '0,100,101', '换班', 3, '0', 103, 1, now(), NULL, NULL);
+INSERT INTO flow_category VALUES (107, '000000', 101, '0,100,101', '外出', 4, '0', 103, 1, now(), NULL, NULL);
+INSERT INTO flow_category VALUES (108, '000000', 102, '0,100,102', '转正', 1, '0', 103, 1, now(), NULL, NULL);
+INSERT INTO flow_category VALUES (109, '000000', 102, '0,100,102', '离职', 2, '0', 103, 1, now(), NULL, NULL);
 
 -- ----------------------------
 -- 流程spel表达式定义表
@@ -396,6 +398,8 @@ COMMENT ON COLUMN flow_instance_biz_ext.business_id  IS '业务Id';
 CREATE TABLE test_leave
 (
     id          int8         NOT NULL,
+    tenant_id   VARCHAR(20)  DEFAULT '000000'::varchar,
+    apply_code  VARCHAR(50)  NOT NULL,
     leave_type  VARCHAR(255) NOT NULL,
     start_date  TIMESTAMP    NOT NULL,
     end_date    TIMESTAMP    NOT NULL,
@@ -412,6 +416,8 @@ CREATE TABLE test_leave
 
 COMMENT ON TABLE test_leave IS '请假申请表';
 COMMENT ON COLUMN test_leave.id IS 'id';
+COMMENT ON COLUMN test_leave.tenant_id IS '租户编号';
+COMMENT ON COLUMN test_leave.apply_code IS '申请编号';
 COMMENT ON COLUMN test_leave.leave_type IS '请假类型';
 COMMENT ON COLUMN test_leave.start_date IS '开始时间';
 COMMENT ON COLUMN test_leave.end_date IS '结束时间';
@@ -458,28 +464,28 @@ INSERT INTO sys_menu VALUES ('11641', '请假申请修改', '11638', '3', '#', '
 INSERT INTO sys_menu VALUES ('11642', '请假申请删除', '11638', '4', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:leave:remove', '#', 103, 1, now(), NULL, NULL, '');
 INSERT INTO sys_menu VALUES ('11643', '请假申请导出', '11638', '5', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:leave:export', '#', 103, 1, now(), NULL, NULL, '');
 
-INSERT INTO sys_dict_type VALUES (13, '业务状态', 'wf_business_status', 103, 1, now(), NULL, NULL, '业务状态列表');
-INSERT INTO sys_dict_type VALUES (14, '表单类型', 'wf_form_type', 103, 1, now(), NULL, NULL, '表单类型列表');
-INSERT INTO sys_dict_type VALUES (15, '任务状态', 'wf_task_status', 103, 1, now(), NULL, NULL, '任务状态');
-INSERT INTO sys_dict_data VALUES (39, 1, '已撤销', 'cancel', 'wf_business_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '已撤销');
-INSERT INTO sys_dict_data VALUES (40, 2, '草稿', 'draft', 'wf_business_status', '', 'info', 'N', 103, 1, now(), NULL, NULL, '草稿');
-INSERT INTO sys_dict_data VALUES (41, 3, '待审核', 'waiting', 'wf_business_status', '', 'primary', 'N', 103, 1, now(), NULL, NULL, '待审核');
-INSERT INTO sys_dict_data VALUES (42, 4, '已完成', 'finish', 'wf_business_status', '', 'success', 'N', 103, 1, now(), NULL, NULL, '已完成');
-INSERT INTO sys_dict_data VALUES (43, 5, '已作废', 'invalid', 'wf_business_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '已作废');
-INSERT INTO sys_dict_data VALUES (44, 6, '已退回', 'back', 'wf_business_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '已退回');
-INSERT INTO sys_dict_data VALUES (45, 7, '已终止', 'termination', 'wf_business_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '已终止');
-INSERT INTO sys_dict_data VALUES (46, 1, '自定义表单', 'static', 'wf_form_type', '', 'success', 'N', 103, 1, now(), NULL, NULL, '自定义表单');
-INSERT INTO sys_dict_data VALUES (47, 2, '动态表单', 'dynamic', 'wf_form_type', '', 'primary', 'N', 103, 1, now(), NULL, NULL, '动态表单');
-INSERT INTO sys_dict_data VALUES (48, 1, '撤销', 'cancel', 'wf_task_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '撤销');
-INSERT INTO sys_dict_data VALUES (49, 2, '通过', 'pass', 'wf_task_status', '', 'success', 'N', 103, 1, now(), NULL, NULL, '通过');
-INSERT INTO sys_dict_data VALUES (50, 3, '待审核', 'waiting', 'wf_task_status', '', 'primary', 'N', 103, 1, now(), NULL, NULL, '待审核');
-INSERT INTO sys_dict_data VALUES (51, 4, '作废', 'invalid', 'wf_task_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '作废');
-INSERT INTO sys_dict_data VALUES (52, 5, '退回', 'back', 'wf_task_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '退回');
-INSERT INTO sys_dict_data VALUES (53, 6, '终止', 'termination', 'wf_task_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '终止');
-INSERT INTO sys_dict_data VALUES (54, 7, '转办', 'transfer', 'wf_task_status', '', 'primary', 'N', 103, 1, now(), NULL, NULL, '转办');
-INSERT INTO sys_dict_data VALUES (55, 8, '委托', 'depute', 'wf_task_status', '', 'primary', 'N', 103, 1, now(), NULL, NULL, '委托');
-INSERT INTO sys_dict_data VALUES (56, 9, '抄送', 'copy', 'wf_task_status', '', 'primary', 'N', 103, 1, now(), NULL, NULL, '抄送');
-INSERT INTO sys_dict_data VALUES (57, 10, '加签', 'sign', 'wf_task_status', '', 'primary', 'N', 103, 1, now(), NULL, NULL, '加签');
-INSERT INTO sys_dict_data VALUES (58, 11, '减签', 'sign_off', 'wf_task_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '减签');
-INSERT INTO sys_dict_data VALUES (59, 11, '超时', 'timeout', 'wf_task_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '超时');
+INSERT INTO sys_dict_type VALUES (13, '000000', '业务状态', 'wf_business_status', 103, 1, now(), NULL, NULL, '业务状态列表');
+INSERT INTO sys_dict_type VALUES (14, '000000', '表单类型', 'wf_form_type', 103, 1, now(), NULL, NULL, '表单类型列表');
+INSERT INTO sys_dict_type VALUES (15, '000000', '任务状态', 'wf_task_status', 103, 1, now(), NULL, NULL, '任务状态');
+INSERT INTO sys_dict_data VALUES (39, '000000', 1, '已撤销', 'cancel', 'wf_business_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '已撤销');
+INSERT INTO sys_dict_data VALUES (40, '000000', 2, '草稿', 'draft', 'wf_business_status', '', 'info', 'N', 103, 1, now(), NULL, NULL, '草稿');
+INSERT INTO sys_dict_data VALUES (41, '000000', 3, '待审核', 'waiting', 'wf_business_status', '', 'primary', 'N', 103, 1, now(), NULL, NULL, '待审核');
+INSERT INTO sys_dict_data VALUES (42, '000000', 4, '已完成', 'finish', 'wf_business_status', '', 'success', 'N', 103, 1, now(), NULL, NULL, '已完成');
+INSERT INTO sys_dict_data VALUES (43, '000000', 5, '已作废', 'invalid', 'wf_business_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '已作废');
+INSERT INTO sys_dict_data VALUES (44, '000000', 6, '已退回', 'back', 'wf_business_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '已退回');
+INSERT INTO sys_dict_data VALUES (45, '000000', 7, '已终止', 'termination', 'wf_business_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '已终止');
+INSERT INTO sys_dict_data VALUES (46, '000000', 1, '自定义表单', 'static', 'wf_form_type', '', 'success', 'N', 103, 1, now(), NULL, NULL, '自定义表单');
+INSERT INTO sys_dict_data VALUES (47, '000000', 2, '动态表单', 'dynamic', 'wf_form_type', '', 'primary', 'N', 103, 1, now(), NULL, NULL, '动态表单');
+INSERT INTO sys_dict_data VALUES (48, '000000', 1, '撤销', 'cancel', 'wf_task_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '撤销');
+INSERT INTO sys_dict_data VALUES (49, '000000', 2, '通过', 'pass', 'wf_task_status', '', 'success', 'N', 103, 1, now(), NULL, NULL, '通过');
+INSERT INTO sys_dict_data VALUES (50, '000000', 3, '待审核', 'waiting', 'wf_task_status', '', 'primary', 'N', 103, 1, now(), NULL, NULL, '待审核');
+INSERT INTO sys_dict_data VALUES (51, '000000', 4, '作废', 'invalid', 'wf_task_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '作废');
+INSERT INTO sys_dict_data VALUES (52, '000000', 5, '退回', 'back', 'wf_task_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '退回');
+INSERT INTO sys_dict_data VALUES (53, '000000', 6, '终止', 'termination', 'wf_task_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '终止');
+INSERT INTO sys_dict_data VALUES (54, '000000', 7, '转办', 'transfer', 'wf_task_status', '', 'primary', 'N', 103, 1, now(), NULL, NULL, '转办');
+INSERT INTO sys_dict_data VALUES (55, '000000', 8, '委托', 'depute', 'wf_task_status', '', 'primary', 'N', 103, 1, now(), NULL, NULL, '委托');
+INSERT INTO sys_dict_data VALUES (56, '000000', 9, '抄送', 'copy', 'wf_task_status', '', 'primary', 'N', 103, 1, now(), NULL, NULL, '抄送');
+INSERT INTO sys_dict_data VALUES (57, '000000', 10, '加签', 'sign', 'wf_task_status', '', 'primary', 'N', 103, 1, now(), NULL, NULL, '加签');
+INSERT INTO sys_dict_data VALUES (58, '000000', 11, '减签', 'sign_off', 'wf_task_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '减签');
+INSERT INTO sys_dict_data VALUES (59, '000000', 11, '超时', 'timeout', 'wf_task_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '超时');
 
