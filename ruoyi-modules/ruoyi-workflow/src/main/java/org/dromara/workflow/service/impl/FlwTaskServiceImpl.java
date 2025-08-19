@@ -83,7 +83,6 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
     private final IFlwTaskAssigneeService flwTaskAssigneeService;
     private final IFlwCommonService flwCommonService;
     private final IFlwNodeExtService flwNodeExtService;
-    private final FlowDefinitionMapper flowDefinitionMapper;
     private final IFlwInstanceBizExtService flowInstanceBizExtService;
 
     /**
@@ -108,6 +107,11 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
         variables.put(BUSINESS_ID, businessId);
         FlowInstance flowInstance = flowInstanceMapper.selectOne(new LambdaQueryWrapper<>(FlowInstance.class)
             .eq(FlowInstance::getBusinessId, businessId));
+        FlowInstanceBizExtBo extBo = startProcessBo.getFlowInstanceBizExtBo();
+        if (ObjectUtil.isEmpty(extBo)) {
+            extBo = new FlowInstanceBizExtBo();
+            startProcessBo.setFlowInstanceBizExtBo(extBo);
+        }
         if (ObjectUtil.isNotNull(flowInstance)) {
             BusinessStatusEnum.checkStartStatus(flowInstance.getFlowStatus());
             List<Task> taskList = taskService.list(new FlowTask().setInstanceId(flowInstance.getId()));
@@ -120,12 +124,7 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
             buildFlowInstanceBizExt(flowInstance, startProcessBo.getFlowInstanceBizExtBo());
             return dto;
         }
-        FlowInstanceBizExtBo extBo = startProcessBo.getFlowInstanceBizExtBo();
         String businessCode;
-        if (ObjectUtil.isEmpty(extBo)) {
-            extBo = new FlowInstanceBizExtBo();
-            startProcessBo.setFlowInstanceBizExtBo(extBo);
-        }
         // 生成业务编号
         if (StringUtils.isBlank(extBo.getBusinessCode())) {
             //todo 按照自己业务自行修改
