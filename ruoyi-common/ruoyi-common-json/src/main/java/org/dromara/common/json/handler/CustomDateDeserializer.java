@@ -25,7 +25,7 @@ public class CustomDateDeserializer extends JsonDeserializer<Date> {
      */
     @Override
     public Date deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        return DateUtil.parse(p.getText());
+        return DateUtil.parse(p.getText()).toJdkDate();
     }
 
 }
