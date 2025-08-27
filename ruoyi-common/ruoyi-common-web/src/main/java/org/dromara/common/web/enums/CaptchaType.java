@@ -1,6 +1,7 @@
 package org.dromara.common.web.enums;
 
 import cn.hutool.captcha.generator.CodeGenerator;
+import cn.hutool.captcha.generator.MathGenerator;
 import cn.hutool.captcha.generator.RandomGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public enum CaptchaType {
     /**
      * 数字
      */
-    MATH(UnsignedMathGenerator.class),
+    MATH(MathGenerator.class),
 
     /**
      * 字符
