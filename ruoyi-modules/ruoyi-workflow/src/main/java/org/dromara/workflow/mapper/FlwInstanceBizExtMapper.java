@@ -26,7 +26,7 @@ public interface FlwInstanceBizExtMapper extends BaseMapperPlus<FlowInstanceBizE
         FlowInstanceBizExt exist = this.selectOne(new LambdaQueryWrapper<FlowInstanceBizExt>()
             .eq(FlowInstanceBizExt::getInstanceId, entity.getInstanceId()));
 
-        if (ObjectUtil.isNotNull(entity)) {
+        if (ObjectUtil.isNotNull(exist)) {
             // 存在就带上主键更新
             entity.setId(exist.getId());
             return updateById(entity);
