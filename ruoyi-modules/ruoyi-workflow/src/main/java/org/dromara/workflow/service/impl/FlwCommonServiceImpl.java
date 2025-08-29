@@ -11,9 +11,8 @@ import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mail.utils.MailUtils;
 import org.dromara.common.sse.dto.SseMessageDto;
 import org.dromara.common.sse.utils.SseMessageUtils;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.entity.Node;
-import org.dromara.warm.flow.core.enums.SkipType;
-import org.dromara.warm.flow.core.service.NodeService;
 import org.dromara.warm.flow.orm.entity.FlowTask;
 import org.dromara.workflow.common.ConditionalOnEnable;
 import org.dromara.workflow.common.enums.MessageTypeEnum;
@@ -21,8 +20,10 @@ import org.dromara.workflow.service.IFlwCommonService;
 import org.dromara.workflow.service.IFlwTaskService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 
 /**
@@ -35,19 +36,27 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class FlwCommonServiceImpl implements IFlwCommonService {
-    private final NodeService nodeService;
+
+    private static final String DEFAULT_SUBJECT = "单据审批提醒";
 
     /**
-     * 发送消息
+     * 根据流程实例发送消息给当前处理人
      *
      * @param flowName    流程定义名称
-     * @param messageType 消息类型
-     * @param message     消息内容，为空则发送默认配置的消息内容
+     * @param instId      流程实例ID
+     * @param messageType 消息类型列表
+     * @param message     消息内容，为空则使用默认消息
      */
     @Override
     public void sendMessage(String flowName, Long instId, List<String> messageType, String message) {
+        if (CollUtil.isNotEmpty(messageType)) {
+            return;
+        }
         IFlwTaskService flwTaskService = SpringUtils.getBean(IFlwTaskService.class);
         List<FlowTask> list = flwTaskService.selectByInstId(instId);
+        if (CollUtil.isEmpty(list)) {
+            return;
+        }
         if (StringUtils.isBlank(message)) {
             message = "有新的【" + flowName + "】单据已经提交至您，请您及时处理。";
         }
@@ -55,19 +64,25 @@ public class FlwCommonServiceImpl implements IFlwCommonService {
         if (CollUtil.isEmpty(userList)) {
             return;
         }
-        sendMessage(messageType, message, "单据审批提醒", userList);
+        sendMessage(messageType, message, DEFAULT_SUBJECT, userList);
     }
 
     /**
-     * 发送消息
+     * 发送消息给指定用户列表
      *
-     * @param messageType 消息类型
+     * @param messageType 消息类型列表
      * @param message     消息内容
      * @param subject     邮件标题
-     * @param userList    接收用户
+     * @param userList    接收用户列表
      */
     @Override
     public void sendMessage(List<String> messageType, String message, String subject, List<UserDTO> userList) {
+        if (CollUtil.isEmpty(messageType) || CollUtil.isEmpty(userList)) {
+            return;
+        }
+        List<Long> userIds = new ArrayList<>(StreamUtils.toSet(userList, UserDTO::getUserId));
+        Set<String> emails = StreamUtils.toSet(userList, UserDTO::getEmail);
+
         for (String code : messageType) {
             MessageTypeEnum messageTypeEnum = MessageTypeEnum.getByCode(code);
             if (ObjectUtil.isEmpty(messageTypeEnum)) {
@@ -76,13 +91,11 @@ public class FlwCommonServiceImpl implements IFlwCommonService {
             switch (messageTypeEnum) {
                 case SYSTEM_MESSAGE -> {
                     SseMessageDto dto = new SseMessageDto();
-                    dto.setUserIds(StreamUtils.toList(userList, UserDTO::getUserId).stream().distinct().collect(Collectors.toList()));
+                    dto.setUserIds(userIds);
                     dto.setMessage(message);
                     SseMessageUtils.publishMessage(dto);
                 }
-                case EMAIL_MESSAGE -> {
-                    MailUtils.sendText(StreamUtils.join(userList, UserDTO::getEmail), subject, message);
-                }
+                case EMAIL_MESSAGE -> MailUtils.sendText(emails, subject, message);
                 case SMS_MESSAGE -> {
                     //todo 短信发送
                 }
@@ -100,8 +113,7 @@ public class FlwCommonServiceImpl implements IFlwCommonService {
      */
     @Override
     public String applyNodeCode(Long definitionId) {
-        Node startNode = nodeService.getStartNode(definitionId);
-        Node nextNode = nodeService.getNextNode(definitionId, startNode.getNodeCode(), null, SkipType.PASS.getKey());
-        return nextNode.getNodeCode();
+        List<Node> firstBetweenNode = FlowEngine.nodeService().getFirstBetweenNode(definitionId, new HashMap<>());
+        return firstBetweenNode.get(0).getNodeCode();
     }
 }
