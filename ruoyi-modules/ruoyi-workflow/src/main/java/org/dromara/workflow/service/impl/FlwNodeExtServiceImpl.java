@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.core.domain.dto.DictTypeDTO;
 import org.dromara.common.core.service.DictService;
-import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.json.utils.JsonUtils;
 import org.dromara.warm.flow.ui.service.NodeExtService;
@@ -18,7 +17,6 @@ import org.dromara.workflow.common.enums.CopySettingEnum;
 import org.dromara.workflow.common.enums.NodeExtEnum;
 import org.dromara.workflow.common.enums.VariablesEnum;
 import org.dromara.workflow.domain.vo.ButtonPermissionVo;
-import org.dromara.workflow.domain.vo.FlowCopyVo;
 import org.dromara.workflow.domain.vo.NodeExtVo;
 import org.dromara.workflow.service.IFlwNodeExtService;
 import org.springframework.stereotype.Service;
@@ -237,9 +235,8 @@ public class FlwNodeExtServiceImpl implements NodeExtService, IFlwNodeExtService
 
             } else if (CopySettingEnum.class.getSimpleName().equals(code)) {
                 // 解析抄送对象 ID 集合
-                Set<String> userIds = StringUtils.str2Set(value, StringUtils.SEPARATOR);
-                List<FlowCopyVo> copySettings = StreamUtils.toList(userIds, x -> new FlowCopyVo(Convert.toLong(x)));
-                nodeExtVo.setFlowCopyList(copySettings);
+                nodeExtVo.setCopySettings(StringUtils.str2Set(value, StringUtils.SEPARATOR));
+
             } else if (VariablesEnum.class.getSimpleName().equals(code)) {
                 // 解析自定义参数
                 // 将 key=value 字符串拆分为 Map
