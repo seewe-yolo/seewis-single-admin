@@ -1,15 +1,12 @@
 package org.dromara.workflow.listener;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ObjectUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.core.enums.BusinessStatusEnum;
-import org.dromara.common.core.service.UserService;
-import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.entity.Definition;
@@ -33,7 +30,6 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 全局任务办理监听
@@ -51,7 +47,6 @@ public class WorkflowGlobalListener implements GlobalListener {
     private final FlowProcessEventHandler flowProcessEventHandler;
     private final IFlwCommonService flwCommonService;
     private final IFlwNodeExtService nodeExtService;
-    private final UserService userService;
     private final InsService insService;
 
     /**
@@ -75,16 +70,9 @@ public class WorkflowGlobalListener implements GlobalListener {
         if (StringUtils.isNotBlank(ext)) {
             NodeExtVo nodeExt = nodeExtService.parseNodeExt(ext);
             Map<String, Object> variable = listenerVariable.getVariable();
-            Set<String> copyList = nodeExt.getCopySettings();
-            if (CollUtil.isNotEmpty(copyList)) {
-                List<FlowCopyBo> list = StreamUtils.toList(copyList, x -> {
-                    FlowCopyBo bo = new FlowCopyBo();
-                    Long id = Convert.toLong(x);
-                    bo.setUserId(id);
-                    bo.setUserName(userService.selectUserNameById(id));
-                    return bo;
-                });
-                variable.put(FlowConstant.FLOW_COPY_LIST, list);
+
+            if (CollUtil.isNotEmpty(nodeExt.getFlowCopyList())) {
+                variable.put(FlowConstant.FLOW_COPY_LIST, nodeExt.getFlowCopyList());
             }
             if (CollUtil.isNotEmpty(nodeExt.getVariables())) {
                 variable.putAll(nodeExt.getVariables());
@@ -181,12 +169,14 @@ public class WorkflowGlobalListener implements GlobalListener {
         }
 
         if (variable.containsKey(FlowConstant.FLOW_COPY_LIST)) {
-            List<FlowCopyBo> flowCopyList = MapUtil.get(variable, FlowConstant.FLOW_COPY_LIST, new TypeReference<>() {});
+            List<FlowCopyBo> flowCopyList = MapUtil.get(variable, FlowConstant.FLOW_COPY_LIST, new TypeReference<>() {
+            });
             // 添加抄送人
             flwTaskService.setCopy(task, flowCopyList);
         }
         if (variable.containsKey(FlowConstant.MESSAGE_TYPE)) {
-            List<String> messageType = MapUtil.get(variable, FlowConstant.MESSAGE_TYPE, new TypeReference<>() {});
+            List<String> messageType = MapUtil.get(variable, FlowConstant.MESSAGE_TYPE, new TypeReference<>() {
+            });
             String notice = MapUtil.getStr(variable, FlowConstant.MESSAGE_NOTICE);
             // 消息通知
             if (CollUtil.isNotEmpty(messageType)) {
