@@ -638,14 +638,14 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
             //办理人变量替换
             ExpressionUtil.evalVariable(buildNextTaskList, FlowParams.build().variable(mergeVariable));
             for (FlowNode flowNode : nextFlowNodes) {
-                Task first = StreamUtils.findFirst(buildNextTaskList, t -> t.getNodeCode().equals(flowNode.getNodeCode()));
-                if (ObjectUtil.isNotNull(first) && CollUtil.isNotEmpty(first.getPermissionList())) {
-                    List<UserDTO> users = flwTaskAssigneeService.fetchUsersByStorageIds(StringUtils.joinComma(first.getPermissionList()));
-                    if (CollUtil.isNotEmpty(users)) {
-                        flowNode.setPermissionFlag(StreamUtils.join(users, e -> Convert.toStr(e.getUserId())));
-                    }
-                }
-
+                StreamUtils.findFirst(buildNextTaskList, t -> t.getNodeCode().equals(flowNode.getNodeCode()))
+                    .ifPresent(first -> {
+                        List<UserDTO> users;
+                        if (CollUtil.isNotEmpty(first.getPermissionList())
+                            && CollUtil.isNotEmpty(users = flwTaskAssigneeService.fetchUsersByStorageIds(StringUtils.joinComma(first.getPermissionList())))) {
+                            flowNode.setPermissionFlag(StreamUtils.join(users, e -> Convert.toStr(e.getUserId())));
+                        }
+                    });
             }
         }
         return nextFlowNodes;
