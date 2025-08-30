@@ -40,7 +40,7 @@ public class StreamUtils {
      *
      * @param collection 需要查询的集合
      * @param function   过滤方法
-     * @return 找到符合条件的第一个元素，没有则返回null
+     * @return 找到符合条件的第一个元素，没有则返回 Optional.empty()
      */
     public static <E> Optional<E> findFirst(Collection<E> collection, Predicate<E> function) {
         if (CollUtil.isEmpty(collection)) {
@@ -56,7 +56,7 @@ public class StreamUtils {
      *
      * @param collection 需要查询的集合
      * @param function   过滤方法
-     * @return 找到符合条件的第一个元素，没有则返回 Optional.empty();
+     * @return 找到符合条件的第一个元素，没有则返回 null
      */
     public static <E> E findFirstValue(Collection<E> collection, Predicate<E> function) {
         return findFirst(collection,function).orElse(null);
@@ -67,7 +67,7 @@ public class StreamUtils {
      *
      * @param collection 需要查询的集合
      * @param function   过滤方法
-     * @return 找到符合条件的任意一个元素，没有则返回null
+     * @return 找到符合条件的任意一个元素，没有则返回 Optional.empty()
      */
     public static <E> Optional<E> findAny(Collection<E> collection, Predicate<E> function) {
         if (CollUtil.isEmpty(collection)) {
