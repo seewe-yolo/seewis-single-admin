@@ -8,41 +8,33 @@ import cn.idev.excel.write.builder.ExcelWriterTableBuilder;
 import cn.idev.excel.write.metadata.WriteSheet;
 import cn.idev.excel.write.metadata.WriteTable;
 import cn.idev.excel.write.metadata.fill.FillConfig;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Collection;
 import java.util.function.Supplier;
 
 /**
- * ExcelWriterHelper Excel写出助手
+ * ExcelWriterWrapper Excel写出包装器
  * <br>
  * 提供了一组与 ExcelWriter 一一对应的写出方法，避免直接提供 ExcelWriter 而导致的一些不可控问题（比如提前关闭了IO流等）
  *
- *
- * @see ExcelWriter
  * @author 秋辞未寒
+ * @see ExcelWriter
  */
-@RequiredArgsConstructor
-public class ExcelWriterHelper {
+public record ExcelWriterWrapper<T>(ExcelWriter excelWriter) {
 
-    @Getter(AccessLevel.PRIVATE)
-    private final ExcelWriter excelWriter;
-
-    public void write(Collection<?> data, WriteSheet writeSheet) {
+    public void write(Collection<T> data, WriteSheet writeSheet) {
         excelWriter.write(data, writeSheet);
     }
 
-    public void write(Supplier<Collection<?>> supplier, WriteSheet writeSheet) {
-        excelWriter.write(supplier, writeSheet);
+    public void write(Supplier<Collection<T>> supplier, WriteSheet writeSheet) {
+        excelWriter.write(supplier.get(), writeSheet);
     }
 
-    public void write(Collection<?> data, WriteSheet writeSheet, WriteTable writeTable) {
+    public void write(Collection<T> data, WriteSheet writeSheet, WriteTable writeTable) {
         excelWriter.write(data, writeSheet, writeTable);
     }
 
-    public void write(Supplier<Collection<?>> supplier, WriteSheet writeSheet, WriteTable writeTable) {
+    public void write(Supplier<Collection<T>> supplier, WriteSheet writeSheet, WriteTable writeTable) {
         excelWriter.write(supplier.get(), writeSheet, writeTable);
     }
 
@@ -67,13 +59,13 @@ public class ExcelWriterHelper {
     }
 
     /**
-     * 创建一个 ExcelWriterHelper
+     * 创建一个 ExcelWriterWrapper
      *
      * @param excelWriter ExcelWriter
-     * @return ExcelWriterHelper
+     * @return ExcelWriterWrapper
      */
-    public static ExcelWriterHelper of(ExcelWriter excelWriter) {
-        return new ExcelWriterHelper(excelWriter);
+    public static  <T> ExcelWriterWrapper<T> of(ExcelWriter excelWriter) {
+        return new ExcelWriterWrapper<>(excelWriter);
     }
 
     // -------------------------------- sheet start

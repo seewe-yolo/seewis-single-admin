@@ -212,7 +212,7 @@ public class ExcelUtil {
      * @param options  Excel下拉可选项
      * @param consumer 导出助手消费函数
      */
-    public static <T> void exportExcel(Class<T> headType, OutputStream os, List<DropDownOptions> options, Consumer<ExcelWriterHelper> consumer) {
+    public static <T> void exportExcel(Class<T> headType, OutputStream os, List<DropDownOptions> options, Consumer<ExcelWriterWrapper<T>> consumer) {
         try (ExcelWriter writer = FastExcel.write(os, headType)
             .autoCloseStream(false)
             // 自动适配
@@ -224,9 +224,8 @@ public class ExcelUtil {
             // 添加下拉框操作
             .registerWriteHandler(new ExcelDownHandler(options))
             .build()) {
-            ExcelWriterHelper helper = ExcelWriterHelper.of(writer);
             // 执行消费函数
-            consumer.accept(helper);
+            consumer.accept(ExcelWriterWrapper.of(writer));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -239,7 +238,7 @@ public class ExcelUtil {
      * @param os       输出流
      * @param consumer 导出助手消费函数
      */
-    public static <T> void exportExcel(Class<T> headType, OutputStream os, Consumer<ExcelWriterHelper> consumer) {
+    public static <T> void exportExcel(Class<T> headType, OutputStream os, Consumer<ExcelWriterWrapper<T>> consumer) {
         exportExcel(headType, os, null, consumer);
     }
 

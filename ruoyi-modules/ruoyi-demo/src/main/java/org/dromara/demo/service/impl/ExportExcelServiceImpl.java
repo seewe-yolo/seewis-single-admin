@@ -9,10 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.file.FileUtils;
-import org.dromara.common.excel.core.CellMergeStrategy;
 import org.dromara.common.excel.core.DropDownOptions;
 import org.dromara.common.excel.utils.ExcelUtil;
-import org.dromara.common.excel.utils.ExcelWriterHelper;
+import org.dromara.common.excel.utils.ExcelWriterWrapper;
 import org.dromara.demo.domain.vo.ExportDemoVo;
 import org.dromara.demo.service.IExportExcelService;
 import org.springframework.stereotype.Service;
@@ -246,7 +245,7 @@ public class ExportExcelServiceImpl implements IExportExcelService {
         FileUtils.setAttachmentResponseHeader(response, filename);
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8");
 
-        ExcelUtil.exportExcel(ExportDemoVo.class, response.getOutputStream(), helper -> {
+        ExcelUtil.exportExcel(ExportDemoVo.class, response.getOutputStream(), wrapper -> {
             // 创建表格数据，业务中一般通过数据库查询
             List<ExportDemoVo> excelDataList = new ArrayList<>();
             for (int i = 0; i < 30; i++) {
@@ -264,13 +263,13 @@ public class ExportExcelServiceImpl implements IExportExcelService {
             }
 
             // 创建表格
-            WriteSheet sheet = ExcelWriterHelper.sheetBuilder("自定义导出demo")
+            WriteSheet sheet = ExcelWriterWrapper.sheetBuilder("自定义导出demo")
                 // 合并单元格
                 // .registerWriteHandler(new CellMergeStrategy(excelDataList, true))
                 .build();
 
 
-            helper.write(excelDataList, sheet);
+            wrapper.write(excelDataList, sheet);
 
             List<ExportDemoVo> excelDataList2 = new ArrayList<>();
             for (int i = 0; i < 20; i++) {
@@ -288,11 +287,11 @@ public class ExportExcelServiceImpl implements IExportExcelService {
                 excelDataList2.add(everyRowData);
             }
 
-            helper.write(excelDataList2, sheet);
+            wrapper.write(excelDataList2, sheet);
 
             // 或者在同一个excel中创建多个表格
-            // WriteSheet sheet2 = ExcelWriterHelper.sheetBuilder("自定义导出demo2").build();
-            // helper.write(excelDataList2, sheet2);
+            // WriteSheet sheet2 = ExcelWriterWrapper.sheetBuilder("自定义导出demo2").build();
+            // wrapper.write(excelDataList2, sheet2);
         });
     }
 }
