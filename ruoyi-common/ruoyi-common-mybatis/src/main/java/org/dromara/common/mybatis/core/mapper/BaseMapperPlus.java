@@ -225,8 +225,7 @@ public interface BaseMapperPlus<T, V> extends BaseMapper<T> {
     }
 
     /**
-     * 根据条件查询单个VO对象，并指定返回的VO对象的类型(自动拼接 limit 1)
-     * 注意不要再自己添加 limit 1 做限制了
+     * 根据条件查询单个VO对象，并指定返回的VO对象的类型
      *
      * @param wrapper 查询条件Wrapper
      * @param voClass 返回的VO对象的Class对象
@@ -238,8 +237,7 @@ public interface BaseMapperPlus<T, V> extends BaseMapper<T> {
     }
 
     /**
-     * 根据条件查询单个实体对象，并将其转换为指定的VO对象(自动拼接 limit 1)
-     * 注意不要再自己添加 limit 1 做限制了
+     * 根据条件查询单个实体对象，并将其转换为指定的VO对象
      *
      * @param wrapper 查询条件Wrapper
      * @param voClass 要转换的VO类的Class对象
@@ -256,8 +254,8 @@ public interface BaseMapperPlus<T, V> extends BaseMapper<T> {
     }
 
     /**
-     * 根据条件查询单条记录（自动拼接 limit 1 限制返回 1 条数据，不依赖 {@code throwEx} 参数）
-     * 注意不要再自己添加 limit 1 做限制了
+     * 根据条件查询单条记录（自动限制返回 1 条数据，不依赖 {@code throwEx} 参数）
+     *
      * <p>
      * <strong>注意：</strong>
      * 1. 使用 {@code Page<>(1, 1)} 强制分页查询，确保 SQL 自动添加 {@code LIMIT 1}，因此 {@code throwEx} 参数不再生效
