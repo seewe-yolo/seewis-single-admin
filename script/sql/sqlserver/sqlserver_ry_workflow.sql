@@ -1519,7 +1519,7 @@ INSERT sys_menu VALUES (11630, N'流程监控', 11616, 4, N'monitor', NULL, N'',
 GO
 INSERT sys_menu VALUES (11631, N'待办任务', 11630, 2, N'allTaskWaiting', N'workflow/task/allTaskWaiting', N'', 1, 1, N'C', N'0', N'0', N'', N'waiting', 103, 1, GETDATE(), NULL, NULL, N'');
 GO
-INSERT sys_menu VALUES (11700, N'流程设计', 11616, 5, N'design/index',   N'workflow/processDefinition/design', N'', 1, 1, N'C', N'1', N'0', N'workflow:leave:edit', N'#', 103, 1, GETDATE(), NULL, NULL, N'');
+INSERT sys_menu VALUES (11700, N'流程设计', 11616, 5, N'design/index',   N'workflow/processDefinition/design', N'', 1, 1, N'C', N'1', N'0', N'workflow:leave:edit', N'#', 103, 1, GETDATE(), NULL, NULL, N'/workflow/processDefinition');
 GO
 INSERT sys_menu VALUES (11701, N'请假申请', 11616, 6, N'leaveEdit/index', N'workflow/leave/leaveEdit', N'', 1, 1, N'C', N'1', N'0', N'workflow:leave:edit', N'#', 103, 1, GETDATE(), NULL, NULL, N'');
 GO
