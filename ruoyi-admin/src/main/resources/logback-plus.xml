@@ -18,7 +18,7 @@
         <file>${log.path}/sys-console.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 日志文件名格式 -->
-            <fileNamePattern>${log.path}/sys-console.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <fileNamePattern>${log.path}/sys-console.%d{yyyy-MM-dd}.log</fileNamePattern>
             <!-- 日志最大 1天 -->
             <maxHistory>1</maxHistory>
         </rollingPolicy>
