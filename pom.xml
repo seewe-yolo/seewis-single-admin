@@ -13,7 +13,7 @@
     <description>Dromara RuoYi-Vue-Plus管理系统</description>
 
     <properties>
-        <revision>5.4.1</revision>
+        <revision>5.5.0</revision>
         <spring-boot.version>3.5.6</spring-boot.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
