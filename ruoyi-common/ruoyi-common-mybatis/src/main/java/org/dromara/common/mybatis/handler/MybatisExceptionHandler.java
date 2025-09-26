@@ -5,7 +5,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.core.domain.R;
 import org.dromara.common.core.utils.StringUtils;
+import org.dromara.common.satoken.handler.SaTokenExceptionHandler;
 import org.mybatis.spring.MyBatisSystemException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -18,6 +20,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class MybatisExceptionHandler {
+
+   @Autowired
+   private SaTokenExceptionHandler saTokenExceptionHandler;
 
     /**
      * 主键或UNIQUE索引，数据重复异常
@@ -39,6 +44,10 @@ public class MybatisExceptionHandler {
         if (StringUtils.contains(message, "CannotFindDataSourceException")) {
             log.error("请求地址'{}', 未找到数据源", requestURI);
             return R.fail(HttpStatus.HTTP_INTERNAL_ERROR, "未找到数据源，请联系管理员确认");
+        }
+        if (StringUtils.contains(message, "NotLoginException")) {
+            log.error("请求地址'{}',认证失败'{}',无法访问系统资源", requestURI, e.getMessage());
+            return R.fail(HttpStatus.HTTP_UNAUTHORIZED, "认证失败，无法访问系统资源");
         }
         log.error("请求地址'{}', Mybatis系统异常", requestURI, e);
         return R.fail(HttpStatus.HTTP_INTERNAL_ERROR, message);
