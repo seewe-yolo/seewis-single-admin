@@ -384,7 +384,6 @@ INSERT INTO flow_spel VALUES (2, NULL, NULL, 'initiator', '${initiator}', '流�
 -- ----------------------------
 CREATE TABLE flow_instance_biz_ext (
    id             NUMBER(20),
-   tenant_id      VARCHAR2(20)  DEFAULT '000000',
    create_dept    NUMBER(20),
    create_by      NUMBER(20),
    create_time    TIMESTAMP,
@@ -401,7 +400,6 @@ alter table flow_instance_biz_ext add constraint pk_fi_biz_ext primary key (id);
 
 COMMENT ON TABLE flow_instance_biz_ext IS '流程实例业务扩展表';
 COMMENT ON COLUMN flow_instance_biz_ext.id  IS '主键id';
-COMMENT ON COLUMN flow_instance_biz_ext.tenant_id  IS '租户编号';
 COMMENT ON COLUMN flow_instance_biz_ext.create_dept  IS '创建部门';
 COMMENT ON COLUMN flow_instance_biz_ext.create_by  IS '创建者';
 COMMENT ON COLUMN flow_instance_biz_ext.create_time  IS '创建时间';

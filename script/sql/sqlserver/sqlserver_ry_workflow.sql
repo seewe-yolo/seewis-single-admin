@@ -1265,7 +1265,6 @@ GO
 
 CREATE TABLE flow_instance_biz_ext (
    id             BIGINT         NOT NULL,
-   tenant_id      VARCHAR(20)    DEFAULT ('000000'),
    create_dept    BIGINT,
    create_by      BIGINT,
    create_time    DATETIME,
@@ -1292,13 +1291,6 @@ EXEC sp_addextendedproperty
     'SCHEMA', N'dbo',
     'TABLE', N'flow_instance_biz_ext',
     'COLUMN', N'id'
-GO
-
-EXEC sp_addextendedproperty
-    'MS_Description', N'租户编号',
-    'SCHEMA', N'dbo',
-    'TABLE', N'flow_instance_biz_ext',
-    'COLUMN', N'tenant_id'
 GO
 
 EXEC sp_addextendedproperty

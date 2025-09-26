@@ -5,7 +5,6 @@ import cn.hutool.captcha.generator.MathGenerator;
 import cn.hutool.captcha.generator.RandomGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.dromara.common.web.utils.UnsignedMathGenerator;
 
 /**
  * 验证码类型
