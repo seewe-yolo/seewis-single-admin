@@ -731,7 +731,7 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
         Long taskId = bo.getTaskId();
         Task task = taskService.getById(taskId);
         FlowNode flowNode = getByNodeCode(task.getNodeCode(), task.getDefinitionId());
-        if ("addSignature".equals(taskOperation) || "reductionSignature".equals(taskOperation)) {
+        if (ADD_SIGNATURE.equals(taskOperation) || REDUCTION_SIGNATURE.equals(taskOperation)) {
             if (flowNode.getNodeRatio().compareTo(BigDecimal.ZERO) == 0) {
                 throw new ServiceException(task.getNodeName() + "不是会签节点！");
             }
