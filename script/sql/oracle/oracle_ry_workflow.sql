@@ -179,7 +179,6 @@ comment on column FLOW_INSTANCE.VARIABLE is '任务变量';
 comment on column FLOW_INSTANCE.FLOW_STATUS is '流程状态（0待提交 1审批中 2审批通过 4终止 5作废 6撤销 8已完成 9已退回 10失效 11拿回）';
 comment on column FLOW_INSTANCE.ACTIVITY_STATUS is '流程激活状态（0挂起 1激活）';
 comment on column FLOW_INSTANCE.DEF_JSON is '流程定义json';
-comment on column FLOW_INSTANCE.CREATE_BY is '创建者';
 comment on column FLOW_INSTANCE.CREATE_TIME is '创建时间';
 comment on column FLOW_INSTANCE.CREATE_BY is '创建人';
 comment on column FLOW_INSTANCE.UPDATE_TIME is '更新时间';
@@ -250,7 +249,6 @@ create table FLOW_HIS_TASK
     EXT              CLOB,
     CREATE_TIME      DATE,
     UPDATE_TIME      DATE,
-    UPDATE_BY        VARCHAR2(64) default '',
     DEL_FLAG         VARCHAR2(1) default '0',
     TENANT_ID        VARCHAR2(40)
 
@@ -278,10 +276,9 @@ comment on column FLOW_HIS_TASK.VARIABLE is '任务变量';
 comment on column FLOW_HIS_TASK.EXT is '扩展字段，预留给业务系统使用';
 comment on column FLOW_HIS_TASK.CREATE_TIME is '任务开始时间';
 comment on column FLOW_HIS_TASK.UPDATE_TIME is '审批完成时间';
-comment on column FLOW_HIS_TASK.UPDATE_BY is '更新人';
 comment on column FLOW_HIS_TASK.DEL_FLAG is '删除标志';
 comment on column FLOW_HIS_TASK.TENANT_ID is '租户id';
-comment on column FLOW_HIS_TASK.APPROVER is '审批人';
+comment on column FLOW_HIS_TASK.APPROVER is '审批者';
 comment on column FLOW_HIS_TASK.COOPERATE_TYPE is '协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)';
 comment on column FLOW_HIS_TASK.COLLABORATOR is '协作人';
 
@@ -292,7 +289,7 @@ create table FLOW_USER
     PROCESSED_BY VARCHAR2(80),
     ASSOCIATED   NUMBER(20)  not null,
     CREATE_TIME  DATE,
-    CREATE_BY    VARCHAR2(80),
+    CREATE_BY    VARCHAR2(64) default '',
     UPDATE_TIME  DATE,
     UPDATE_BY    VARCHAR2(64) default '',
     DEL_FLAG     VARCHAR2(1) default '0',
@@ -308,7 +305,7 @@ comment on column FLOW_USER.TYPE is '人员类型（1待办任务的审批人权
 comment on column FLOW_USER.PROCESSED_BY is '权限人)';
 comment on column FLOW_USER.ASSOCIATED is '任务表id';
 comment on column FLOW_USER.CREATE_TIME is '创建时间';
-comment on column FLOW_USER.CREATE_BY is '节点名称';
+comment on column FLOW_USER.CREATE_BY is '创建人';
 comment on column FLOW_USER.UPDATE_TIME is '更新时间';
 comment on column FLOW_USER.UPDATE_BY is '更新人';
 comment on column FLOW_USER.DEL_FLAG is '删除标志';

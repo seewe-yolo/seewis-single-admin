@@ -16,9 +16,9 @@ CREATE TABLE flow_definition (
     listener_path nvarchar(400) NULL,
     ext nvarchar(500) NULL,
     create_time datetime2(7)  NULL,
-    create_by nvarchar(64) DEFAULT('') NULL,
+    create_by nvarchar(64) NULL,
     update_time datetime2(7)  NULL,
-    update_by nvarchar(64) DEFAULT('') NULL,
+    update_by nvarchar(64) NULL,
     del_flag nchar(1) DEFAULT('0') NULL,
     tenant_id nvarchar(40) NULL,
     CONSTRAINT PK__flow_def__3213E83FEE39AE33 PRIMARY KEY CLUSTERED (id)
@@ -127,17 +127,17 @@ EXEC sp_addextendedproperty
 GO
 
 EXEC sp_addextendedproperty
-'MS_Description', N'更新时间',
-'SCHEMA', N'dbo',
-'TABLE', N'flow_definition',
-'COLUMN', N'update_time'
-GO
-
-EXEC sp_addextendedproperty
 'MS_Description', N'创建人',
 'SCHEMA', N'dbo',
 'TABLE', N'flow_definition',
 'COLUMN', N'create_by'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'更新时间',
+'SCHEMA', N'dbo',
+'TABLE', N'flow_definition',
+'COLUMN', N'update_time'
 GO
 
 EXEC sp_addextendedproperty
@@ -185,9 +185,9 @@ CREATE TABLE flow_node (
     form_path nvarchar(100) NULL,
     version nvarchar(20) NOT NULL,
     create_time datetime2(7)  NULL,
-    create_by nvarchar(64) DEFAULT('') NULL,
+    create_by nvarchar(64) NULL,
     update_time datetime2(7)  NULL,
-    update_by nvarchar(64) DEFAULT('') NULL,
+    update_by nvarchar(64) NULL,
     ext nvarchar(max) NULL,
     del_flag nchar(1) DEFAULT('0') NULL,
     tenant_id nvarchar(40) NULL,
@@ -318,17 +318,17 @@ EXEC sp_addextendedproperty
 GO
 
 EXEC sp_addextendedproperty
-'MS_Description', N'更新时间',
-'SCHEMA', N'dbo',
-'TABLE', N'flow_node',
-'COLUMN', N'update_time'
-GO
-
-EXEC sp_addextendedproperty
 'MS_Description', N'创建人',
 'SCHEMA', N'dbo',
 'TABLE', N'flow_node',
 'COLUMN', N'create_by'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'更新时间',
+'SCHEMA', N'dbo',
+'TABLE', N'flow_node',
+'COLUMN', N'update_time'
 GO
 
 EXEC sp_addextendedproperty
@@ -378,9 +378,9 @@ CREATE TABLE flow_skip (
     skip_condition nvarchar(200) NULL,
     coordinate nvarchar(100) NULL,
     create_time datetime2(7)  NULL,
-    create_by nvarchar(64) DEFAULT('') NULL,
+    create_by nvarchar(64) NULL,
     update_time datetime2(7)  NULL,
-    update_by nvarchar(64) DEFAULT('') NULL,
+    update_by nvarchar(64) NULL,
     del_flag nchar(1) DEFAULT('0') NULL,
     tenant_id nvarchar(40) NULL,
     CONSTRAINT PK__flow_ski__3213E83F073FEE6E PRIMARY KEY CLUSTERED (id)
@@ -468,17 +468,17 @@ EXEC sp_addextendedproperty
 GO
 
 EXEC sp_addextendedproperty
-'MS_Description', N'更新时间',
-'SCHEMA', N'dbo',
-'TABLE', N'flow_skip',
-'COLUMN', N'update_time'
-GO
-
-EXEC sp_addextendedproperty
 'MS_Description', N'创建人',
 'SCHEMA', N'dbo',
 'TABLE', N'flow_skip',
 'COLUMN', N'create_by'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'更新时间',
+'SCHEMA', N'dbo',
+'TABLE', N'flow_skip',
+'COLUMN', N'update_time'
 GO
 
 EXEC sp_addextendedproperty
@@ -520,9 +520,9 @@ CREATE TABLE flow_instance (
     activity_status tinyint DEFAULT('1') NULL,
     def_json nvarchar(max) NULL,
     create_time datetime2(7)  NULL,
-    create_by nvarchar(64) DEFAULT('') NULL,
+    create_by nvarchar(64) NULL,
     update_time datetime2(7)  NULL,
-    update_by nvarchar(64) DEFAULT('') NULL,
+    update_by nvarchar(64) NULL,
     ext nvarchar(500) NULL,
     del_flag nchar(1) DEFAULT('0') NULL,
     tenant_id nvarchar(40) NULL,
@@ -605,13 +605,6 @@ EXEC sp_addextendedproperty
 GO
 
 EXEC sp_addextendedproperty
-'MS_Description', N'创建者',
-'SCHEMA', N'dbo',
-'TABLE', N'flow_instance',
-'COLUMN', N'create_by'
-GO
-
-EXEC sp_addextendedproperty
 'MS_Description', N'创建时间',
 'SCHEMA', N'dbo',
 'TABLE', N'flow_instance',
@@ -619,17 +612,17 @@ EXEC sp_addextendedproperty
 GO
 
 EXEC sp_addextendedproperty
-'MS_Description', N'更新时间',
-'SCHEMA', N'dbo',
-'TABLE', N'flow_instance',
-'COLUMN', N'update_time'
-GO
-
-EXEC sp_addextendedproperty
 'MS_Description', N'创建人',
 'SCHEMA', N'dbo',
 'TABLE', N'flow_instance',
 'COLUMN', N'create_by'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'更新时间',
+'SCHEMA', N'dbo',
+'TABLE', N'flow_instance',
+'COLUMN', N'update_time'
 GO
 
 EXEC sp_addextendedproperty
@@ -677,9 +670,9 @@ CREATE TABLE flow_task (
     form_custom nchar(1) DEFAULT('N') NULL,
     form_path nvarchar(100) NULL,
     create_time datetime2(7)  NULL,
-    create_by nvarchar(64) DEFAULT('') NULL,
+    create_by nvarchar(64) NULL,
     update_time datetime2(7)  NULL,
-    update_by nvarchar(64) DEFAULT('') NULL,
+    update_by nvarchar(64) NULL,
     del_flag nchar(1) DEFAULT('0') NULL,
     tenant_id nvarchar(40) NULL,
     CONSTRAINT PK__flow_tas__3213E83F5AE1F1BA PRIMARY KEY CLUSTERED (id)
@@ -760,17 +753,17 @@ EXEC sp_addextendedproperty
 GO
 
 EXEC sp_addextendedproperty
-'MS_Description', N'更新时间',
-'SCHEMA', N'dbo',
-'TABLE', N'flow_task',
-'COLUMN', N'update_time'
-GO
-
-EXEC sp_addextendedproperty
 'MS_Description', N'创建人',
 'SCHEMA', N'dbo',
 'TABLE', N'flow_task',
 'COLUMN', N'create_by'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'更新时间',
+'SCHEMA', N'dbo',
+'TABLE', N'flow_task',
+'COLUMN', N'update_time'
 GO
 
 EXEC sp_addextendedproperty
@@ -822,7 +815,6 @@ CREATE TABLE flow_his_task (
     ext nvarchar(max) NULL,
     create_time datetime2(7)  NULL,
     update_time datetime2(7)  NULL,
-    update_by nvarchar(64) DEFAULT('') NULL,
     del_flag nchar(1) DEFAULT('0') NULL,
     tenant_id nvarchar(40) NULL,
     CONSTRAINT PK__flow_his__3213E83F67951564 PRIMARY KEY CLUSTERED (id)
@@ -980,13 +972,6 @@ EXEC sp_addextendedproperty
 GO
 
 EXEC sp_addextendedproperty
-'MS_Description', N'更新人',
-'SCHEMA', N'dbo',
-'TABLE', N'flow_his_task',
-'COLUMN', N'update_by'
-GO
-
-EXEC sp_addextendedproperty
 'MS_Description', N'删除标志',
 'SCHEMA', N'dbo',
 'TABLE', N'flow_his_task',
@@ -1012,9 +997,9 @@ CREATE TABLE flow_user (
     processed_by nvarchar(80) NULL,
     associated bigint NOT NULL,
     create_time datetime2(7)  NULL,
-    create_by nvarchar(80) NULL,
+    create_by nvarchar(64) NULL,
     update_time datetime2(7)  NULL,
-    update_by nvarchar(64) DEFAULT('') NULL,
+    update_by nvarchar(64) NULL,
     del_flag nchar(1) DEFAULT('0') NULL,
     tenant_id nvarchar(40) NULL,
     CONSTRAINT PK__flow_use__3213E83FFA38CA8B PRIMARY KEY CLUSTERED (id)

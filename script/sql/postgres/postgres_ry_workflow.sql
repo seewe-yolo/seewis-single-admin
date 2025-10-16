@@ -237,7 +237,6 @@ CREATE TABLE flow_his_task
     variable         text         NULL,
     create_time      timestamp    NULL,
     update_time      timestamp    NULL,
-    update_by        varchar(64)  NULL DEFAULT '':: character varying,
     del_flag         bpchar(1)    NULL     DEFAULT '0':: character varying,
     tenant_id        varchar(40)  NULL,
     CONSTRAINT flow_his_task_pkey PRIMARY KEY (id)
@@ -253,7 +252,7 @@ COMMENT ON COLUMN flow_his_task.node_name IS '开始节点名称';
 COMMENT ON COLUMN flow_his_task.node_type IS '开始节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）';
 COMMENT ON COLUMN flow_his_task.target_node_code IS '目标节点编码';
 COMMENT ON COLUMN flow_his_task.target_node_name IS '结束节点名称';
-COMMENT ON COLUMN flow_his_task.approver IS '审批人';
+COMMENT ON COLUMN flow_his_task.approver IS '审批者';
 COMMENT ON COLUMN flow_his_task.cooperate_type IS '协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)';
 COMMENT ON COLUMN flow_his_task.collaborator IS '协作人';
 COMMENT ON COLUMN flow_his_task.skip_type IS '流转类型（PASS通过 REJECT退回 NONE无动作）';
@@ -265,7 +264,6 @@ COMMENT ON COLUMN flow_his_task.variable IS '任务变量';
 COMMENT ON COLUMN flow_his_task.ext IS '扩展字段，预留给业务系统使用';
 COMMENT ON COLUMN flow_his_task.create_time IS '任务开始时间';
 COMMENT ON COLUMN flow_his_task.update_time IS '审批完成时间';
-COMMENT ON COLUMN flow_his_task.update_by IS '更新人';
 COMMENT ON COLUMN flow_his_task.del_flag IS '删除标志';
 COMMENT ON COLUMN flow_his_task.tenant_id IS '租户id';
 
@@ -276,7 +274,7 @@ CREATE TABLE flow_user
     processed_by varchar(80) NULL,
     associated   int8        NOT NULL,
     create_time  timestamp   NULL,
-    create_by    varchar(80) NULL,
+    create_by    varchar(64)  NULL     DEFAULT '':: character varying,
     update_time  timestamp   NULL,
     update_by    varchar(64)  NULL DEFAULT '':: character varying,
     del_flag     bpchar(1)   NULL DEFAULT '0':: character varying,
