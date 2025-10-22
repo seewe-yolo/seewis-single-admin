@@ -214,6 +214,9 @@ public class FlwNodeExtServiceImpl implements NodeExtService, IFlwNodeExtService
 
         // 解析 JSON 为 Dict 列表
         List<Dict> nodeExtMap = JsonUtils.parseArrayMap(ext);
+        if (ObjectUtil.isEmpty(nodeExtMap)) {
+            return nodeExtVo;
+        }
 
         for (Dict nodeExt : nodeExtMap) {
             String code = nodeExt.getStr("code");
