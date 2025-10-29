@@ -1261,7 +1261,7 @@ EXEC sp_addextendedproperty
     'COLUMN', N'component_name'
 GO
 
--- method_name 字段注释
+EXEC sp_addextendedproperty
     'MS_Description', N'方法名',
     'SCHEMA', N'dbo',
     'TABLE', N'flow_spel',
