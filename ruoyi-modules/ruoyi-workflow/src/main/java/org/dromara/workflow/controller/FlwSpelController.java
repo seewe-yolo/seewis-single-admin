@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 流程spel达式定义
+ * 流程spel表达式定义
  *
  * @author Michelle.Chung
  * @date 2025-07-04
