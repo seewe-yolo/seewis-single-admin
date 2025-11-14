@@ -46,7 +46,7 @@ public class WorkflowServiceImpl implements WorkflowService {
      * @return 结果
      */
     @Override
-    public boolean deleteInstance(List<Long> businessIds) {
+    public boolean deleteInstance(List<String> businessIds) {
         return flwInstanceService.deleteByBusinessIds(businessIds);
     }
 
