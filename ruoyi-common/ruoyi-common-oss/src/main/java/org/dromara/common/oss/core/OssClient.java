@@ -14,7 +14,9 @@ import org.dromara.common.oss.exception.OssException;
 import org.dromara.common.oss.properties.OssProperties;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.core.async.*;
+import software.amazon.awssdk.core.async.AsyncResponseTransformer;
+import software.amazon.awssdk.core.async.BlockingInputStreamAsyncRequestBody;
+import software.amazon.awssdk.core.async.ResponsePublisher;
 import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
@@ -95,7 +97,11 @@ public class OssClient {
                 .region(of())
                 .forcePathStyle(isStyle)
                 .httpClient(NettyNioAsyncHttpClient.builder()
-                    .connectionTimeout(Duration.ofSeconds(60)).build())
+                    .connectionTimeout(Duration.ofSeconds(60))
+                    .connectionAcquisitionTimeout(Duration.ofSeconds(30))
+                    .maxConcurrency(100)
+                    .maxPendingConnectionAcquires(1000)
+                    .build())
                 .build();
 
             //AWS基于 CRT 的 S3 AsyncClient 实例用作 S3 传输管理器的底层客户端
