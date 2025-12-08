@@ -1,12 +1,14 @@
 package org.dromara.common.web.interceptor;
 
 import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.lang.Dict;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ObjectUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
+import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.json.utils.JsonUtils;
 import org.dromara.common.web.filter.RepeatedlyRequestWrapper;
@@ -15,6 +17,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.BufferedReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,11 +42,26 @@ public class PlusWebInvokeTimeInterceptor implements HandlerInterceptor {
             if (request instanceof RepeatedlyRequestWrapper) {
                 BufferedReader reader = request.getReader();
                 jsonParam = IoUtil.read(reader);
+                List<Dict> list = new ArrayList<>();
+                if (JsonUtils.isJsonArray(jsonParam)) {
+                    List<String> list1 = JsonUtils.parseArray(jsonParam, String.class);
+                    for (String str : list1) {
+                        Dict map = JsonUtils.parseMap(str);
+                        MapUtil.removeAny(map, SystemConstants.EXCLUDE_PROPERTIES);
+                        list.add(map);
+                    }
+                    jsonParam = JsonUtils.toJsonString(list);
+                } else {
+                    Dict map = JsonUtils.parseMap(jsonParam);
+                    MapUtil.removeAny(map, SystemConstants.EXCLUDE_PROPERTIES);
+                    jsonParam = JsonUtils.toJsonString(map);
+                }
             }
             log.info("[PLUS]开始请求 => URL[{}],参数类型[json],参数:[{}]", url, jsonParam);
         } else {
             Map<String, String[]> parameterMap = request.getParameterMap();
             if (MapUtil.isNotEmpty(parameterMap)) {
+                MapUtil.removeAny(parameterMap, SystemConstants.EXCLUDE_PROPERTIES);
                 String parameters = JsonUtils.toJsonString(parameterMap);
                 log.info("[PLUS]开始请求 => URL[{}],参数类型[param],参数:[{}]", url, parameters);
             } else {
