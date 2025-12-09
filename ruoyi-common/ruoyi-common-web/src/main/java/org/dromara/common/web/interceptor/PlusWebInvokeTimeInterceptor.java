@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,27 +43,30 @@ public class PlusWebInvokeTimeInterceptor implements HandlerInterceptor {
             if (request instanceof RepeatedlyRequestWrapper) {
                 BufferedReader reader = request.getReader();
                 jsonParam = IoUtil.read(reader);
-                List<Dict> list = new ArrayList<>();
-                if (JsonUtils.isJsonArray(jsonParam)) {
-                    List<String> list1 = JsonUtils.parseArray(jsonParam, String.class);
-                    for (String str : list1) {
-                        Dict map = JsonUtils.parseMap(str);
+                if (StringUtils.isNotBlank(jsonParam)) {
+                    List<Dict> list = new ArrayList<>();
+                    if (JsonUtils.isJsonArray(jsonParam)) {
+                        List<String> list1 = JsonUtils.parseArray(jsonParam, String.class);
+                        for (String str : list1) {
+                            Dict map = JsonUtils.parseMap(str);
+                            MapUtil.removeAny(map, SystemConstants.EXCLUDE_PROPERTIES);
+                            list.add(map);
+                        }
+                        jsonParam = JsonUtils.toJsonString(list);
+                    } else {
+                        Dict map = JsonUtils.parseMap(jsonParam);
                         MapUtil.removeAny(map, SystemConstants.EXCLUDE_PROPERTIES);
-                        list.add(map);
+                        jsonParam = JsonUtils.toJsonString(map);
                     }
-                    jsonParam = JsonUtils.toJsonString(list);
-                } else {
-                    Dict map = JsonUtils.parseMap(jsonParam);
-                    MapUtil.removeAny(map, SystemConstants.EXCLUDE_PROPERTIES);
-                    jsonParam = JsonUtils.toJsonString(map);
                 }
             }
             log.info("[PLUS]开始请求 => URL[{}],参数类型[json],参数:[{}]", url, jsonParam);
         } else {
             Map<String, String[]> parameterMap = request.getParameterMap();
             if (MapUtil.isNotEmpty(parameterMap)) {
-                MapUtil.removeAny(parameterMap, SystemConstants.EXCLUDE_PROPERTIES);
-                String parameters = JsonUtils.toJsonString(parameterMap);
+                Map<String, String[]> map = new LinkedHashMap<>(parameterMap);
+                MapUtil.removeAny(map, SystemConstants.EXCLUDE_PROPERTIES);
+                String parameters = JsonUtils.toJsonString(map);
                 log.info("[PLUS]开始请求 => URL[{}],参数类型[param],参数:[{}]", url, parameters);
             } else {
                 log.info("[PLUS]开始请求 => URL[{}],无参数", url);
