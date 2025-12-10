@@ -87,8 +87,6 @@ comment on column FLOW_NODE.COORDINATE is '坐标';
 comment on column FLOW_NODE.ANY_NODE_SKIP is '任意结点跳转';
 comment on column FLOW_NODE.LISTENER_TYPE is '监听器类型';
 comment on column FLOW_NODE.LISTENER_PATH is '监听器路径';
-comment on column FLOW_NODE.HANDLER_TYPE is '处理器类型';
-comment on column FLOW_NODE.HANDLER_PATH is '处理器路径';
 comment on column FLOW_NODE.FORM_CUSTOM is '审批表单是否自定义 (Y是 N否)';
 comment on column FLOW_NODE.FORM_PATH is '审批表单路径';
 comment on column FLOW_NODE.VERSION is '版本';
