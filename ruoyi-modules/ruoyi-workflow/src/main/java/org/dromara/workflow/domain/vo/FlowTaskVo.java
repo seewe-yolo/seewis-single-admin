@@ -158,7 +158,7 @@ public class FlowTaskVo implements Serializable {
     /**
      * 流程签署比例值 大于0为票签，会签
      */
-    private BigDecimal nodeRatio;
+    private String nodeRatio;
 
     /**
      * 申请人id
