@@ -2,7 +2,6 @@ package org.dromara.system.controller.system;
 
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.hutool.core.util.ObjectUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
@@ -70,9 +69,6 @@ public class SysOssController extends BaseController {
     @Log(title = "OSS对象存储", businessType = BusinessType.INSERT)
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public R<SysOssUploadVo> upload(@RequestPart("file") MultipartFile file) {
-        if (ObjectUtil.isNull(file)) {
-            return R.fail("上传文件不能为空");
-        }
         SysOssVo oss = ossService.upload(file);
         SysOssUploadVo uploadVo = new SysOssUploadVo();
         uploadVo.setUrl(oss.getUrl());

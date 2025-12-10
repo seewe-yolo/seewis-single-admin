@@ -192,6 +192,9 @@ public class SysOssServiceImpl implements ISysOssService, OssService {
      */
     @Override
     public SysOssVo upload(MultipartFile file) {
+        if (ObjectUtil.isNull(file) || file.isEmpty()) {
+            throw new ServiceException("上传文件不能为空");
+        }
         String originalfileName = file.getOriginalFilename();
         String suffix = StringUtils.substring(originalfileName, originalfileName.lastIndexOf("."), originalfileName.length());
         OssClient storage = OssFactory.instance();
@@ -216,6 +219,9 @@ public class SysOssServiceImpl implements ISysOssService, OssService {
      */
     @Override
     public SysOssVo upload(File file) {
+        if (ObjectUtil.isNull(file) || !file.isFile() || file.length() <= 0) {
+            throw new ServiceException("上传文件不能为空");
+        }
         String originalfileName = file.getName();
         String suffix = StringUtils.substring(originalfileName, originalfileName.lastIndexOf("."), originalfileName.length());
         OssClient storage = OssFactory.instance();
