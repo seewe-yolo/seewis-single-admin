@@ -174,13 +174,11 @@ CREATE TABLE flow_node (
     node_code nvarchar(100) NOT NULL,
     node_name nvarchar(100) NULL,
     permission_flag nvarchar(200) NULL,
-    node_ratio decimal(6,3)  NULL,
+    node_ratio nvarchar(200)  NULL,
     coordinate nvarchar(100) NULL,
     any_node_skip nvarchar(100) NULL,
     listener_type nvarchar(100) NULL,
     listener_path nvarchar(400) NULL,
-    handler_type nvarchar(100) NULL,
-    handler_path nvarchar(400) NULL,
     form_custom nchar(1) DEFAULT('N') NULL,
     form_path nvarchar(100) NULL,
     version nvarchar(20) NOT NULL,
@@ -273,20 +271,6 @@ EXEC sp_addextendedproperty
 'SCHEMA', N'dbo',
 'TABLE', N'flow_node',
 'COLUMN', N'listener_path'
-GO
-
-EXEC sp_addextendedproperty
-'MS_Description', N'处理器类型',
-'SCHEMA', N'dbo',
-'TABLE', N'flow_node',
-'COLUMN', N'handler_type'
-GO
-
-EXEC sp_addextendedproperty
-'MS_Description', N'处理器路径',
-'SCHEMA', N'dbo',
-'TABLE', N'flow_node',
-'COLUMN', N'handler_path'
 GO
 
 EXEC sp_addextendedproperty
