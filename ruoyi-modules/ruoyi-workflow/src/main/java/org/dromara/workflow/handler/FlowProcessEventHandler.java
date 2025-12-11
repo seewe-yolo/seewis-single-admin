@@ -6,6 +6,7 @@ import org.dromara.common.core.domain.event.ProcessDeleteEvent;
 import org.dromara.common.core.domain.event.ProcessEvent;
 import org.dromara.common.core.utils.SpringUtils;
 import org.dromara.warm.flow.core.entity.Instance;
+import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.workflow.common.ConditionalOnEnable;
 import org.springframework.stereotype.Component;
 
@@ -52,20 +53,20 @@ public class FlowProcessEventHandler {
      *
      * @param flowCode   流程定义编码
      * @param instance   实例数据
-     * @param taskId     任务id
+     * @param nextTask   任务
      * @param params     上一个任务的办理参数
      */
-    public void processTaskHandler(String flowCode, Instance instance, Long taskId, Map<String, Object> params) {
-        log.info("【流程任务事件发布】流程编码: {}, 业务ID: {}, 节点类型: {}, 节点编码: {}, 节点名称: {}, 任务ID: {}",
-            flowCode, instance.getBusinessId(), instance.getNodeType(), instance.getNodeCode(), instance.getNodeName(), taskId);
+    public void processTaskHandler(String flowCode, Instance instance, Task nextTask, Map<String, Object> params) {
+        log.info("【流程任务事件发布】 流程编码: {}, 业务ID: {}, 节点类型: {}, 节点编码: {}, 节点名称: {}, 任务ID: {}",
+             flowCode, instance.getBusinessId(), nextTask.getNodeType(), nextTask.getNodeCode(), nextTask.getNodeName(), nextTask.getId());
         ProcessTaskEvent processTaskEvent = new ProcessTaskEvent();
         processTaskEvent.setFlowCode(flowCode);
         processTaskEvent.setInstanceId(instance.getId());
         processTaskEvent.setBusinessId(instance.getBusinessId());
-        processTaskEvent.setNodeType(instance.getNodeType());
-        processTaskEvent.setNodeCode(instance.getNodeCode());
-        processTaskEvent.setNodeName(instance.getNodeName());
-        processTaskEvent.setTaskId(taskId);
+        processTaskEvent.setNodeType(nextTask.getNodeType());
+        processTaskEvent.setNodeCode(nextTask.getNodeCode());
+        processTaskEvent.setNodeName(nextTask.getNodeName());
+        processTaskEvent.setTaskId(nextTask.getId());
         processTaskEvent.setStatus(instance.getFlowStatus());
         processTaskEvent.setParams(params);
         SpringUtils.context().publishEvent(processTaskEvent);
