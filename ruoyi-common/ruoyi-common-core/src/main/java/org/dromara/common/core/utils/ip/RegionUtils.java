@@ -58,7 +58,7 @@ public class RegionUtils {
             Config v6Config = null;
             URL v6Url = ResourceUtil.getResource(DEFAULT_IPV6_XDB_PATH);
             if (v6Url == null) {
-                log.info("未加载 IPv6 地址库：未在类路径下找到文件 {}。当前仅启用 IPv4 查询。如需启用 IPv6，请将 ip2region_v6.xdb 放置到 resources 目录", DEFAULT_IPV6_XDB_PATH);
+                log.warn("未加载 IPv6 地址库：未在类路径下找到文件 {}。当前仅启用 IPv4 查询。如需启用 IPv6，请将 ip2region_v6.xdb 放置到 resources 目录", DEFAULT_IPV6_XDB_PATH);
             } else {
                 File v6TempXdb = FileUtil.writeFromStream(v6Url.openStream(), FileUtil.createTempFile());
                 v6Config = Config.custom()
@@ -71,7 +71,7 @@ public class RegionUtils {
 
             // 初始化Ip2Region实例
             RegionUtils.ip2Region = Ip2Region.create(v4Config, v6Config);
-            log.debug("Ip2RegionHelper初始化成功，加载IP地址库数据成功！");
+            log.debug("IP工具初始化成功，加载IP地址库数据成功！");
         } catch (Exception e) {
             throw new ServiceException("Ip2RegionHelper初始化失败，原因：{}", e.getMessage());
         }
