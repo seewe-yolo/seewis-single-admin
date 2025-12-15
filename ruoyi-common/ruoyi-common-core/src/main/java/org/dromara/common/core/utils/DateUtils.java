@@ -1,5 +1,6 @@
 package org.dromara.common.core.utils;
 
+import cn.hutool.core.date.DateUtil;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.dromara.common.core.enums.FormatsType;
 import org.dromara.common.core.exception.ServiceException;
@@ -294,6 +295,27 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         // 校验时间跨度不超过最大限制
         if (diff > maxValue) {
             throw new ServiceException("最大时间跨度为 {} {}", maxValue, unit.toString().toLowerCase());
+        }
+    }
+
+    /**
+     * 根据指定日期时间获取时间段（凌晨 / 上午 / 中午 / 下午 / 晚上）
+     *
+     * @param date 日期时间
+     * @return 时间段描述
+     */
+    public static String getTodayHour(Date date) {
+        int hour = DateUtil.hour(date, true);
+        if (hour <= 6) {
+            return "凌晨";
+        } else if (hour < 12) {
+            return "上午";
+        } else if (hour == 12) {
+            return "中午";
+        } else if (hour <= 18) {
+            return "下午";
+        } else {
+            return "晚上";
         }
     }
 
