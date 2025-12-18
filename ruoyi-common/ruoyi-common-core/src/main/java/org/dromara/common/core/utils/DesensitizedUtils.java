@@ -34,21 +34,13 @@ public class DesensitizedUtils extends DesensitizedUtil {
             return StrUtil.repeat('*', len);
         }
 
-        // 可用长度 = 总长度 - 前后可见长度
-        int available = len - prefixVisible - suffixVisible;
-
-        // 中间掩码长度不能超过可用长度
-        int actualMaskLength = Math.min(maskLength, available);
-
-        // 剩余字符尽量显示在中间掩码旁
-        int remaining = available - actualMaskLength;
-        String middleChars = remaining > 0 ? value.substring(prefixVisible, prefixVisible + remaining) : "";
-        String middleMask = StrUtil.repeat('*', actualMaskLength);
-
         String prefix = value.substring(0, prefixVisible);
         String suffix = value.substring(len - suffixVisible);
-
-        return prefix + middleChars + middleMask + suffix;
+        // 中间可用于脱敏的最大长度
+        int middleLen = len - prefixVisible - suffixVisible;
+        // 实际掩码长度 至少脱敏 1 位
+        int actualMaskLen = Math.max(1, Math.min(maskLength, middleLen));
+        return prefix + StrUtil.repeat('*', actualMaskLen) + suffix;
     }
 
 }
