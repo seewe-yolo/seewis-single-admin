@@ -29,7 +29,10 @@ public class CellMergeHandler {
         // 行合并开始下标
         this.rowIndex = hasTitle ? 1 : 0;
     }
-
+    private CellMergeHandler(final boolean hasTitle, final int rowIndex) {
+        this.hasTitle = hasTitle;
+        this.rowIndex = hasTitle ? rowIndex : 0;
+    }
     @SneakyThrows
     public List<CellRangeAddress> handle(List<?> rows) {
         // 如果入参为空集合则返回空集
@@ -103,6 +106,10 @@ public class CellMergeHandler {
                 }
 
                 if (isAddResult && i > current) {
+                    //如果是同一行，则跳过合并
+                    if (current + rowIndex == lastRow) {
+                        continue;
+                    }
                     result.add(new CellRangeAddress(current + rowIndex, lastRow, colNum, colNum));
                 }
             }
@@ -176,6 +183,16 @@ public class CellMergeHandler {
         static FieldColumnIndex of(int colIndex, CellMerge cellMerge) {
             return new FieldColumnIndex(colIndex, cellMerge);
         }
+    }
+    /**
+     * 创建一个单元格合并处理器实例
+     *
+     * @param hasTitle 是否合并标题
+     * @param rowIndex 行索引
+     * @return 单元格合并处理器
+     */
+    public static CellMergeHandler of(final boolean hasTitle, final int rowIndex) {
+        return new CellMergeHandler(hasTitle, rowIndex);
     }
 
     /**
