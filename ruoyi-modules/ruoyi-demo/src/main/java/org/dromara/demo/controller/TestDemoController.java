@@ -21,7 +21,7 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.web.core.BaseController;
 import org.dromara.demo.domain.TestDemo;
 import org.dromara.demo.domain.bo.TestDemoBo;
-import org.dromara.demo.domain.bo.TestDemoImportVo;
+import org.dromara.demo.domain.vo.TestDemoImportVo;
 import org.dromara.demo.domain.vo.TestDemoVo;
 import org.dromara.demo.service.ITestDemoService;
 import org.springframework.http.MediaType;

@@ -1,4 +1,4 @@
-package org.dromara.demo.domain.bo;
+package org.dromara.demo.domain.vo;
 
 import cn.idev.excel.annotation.ExcelProperty;
 import io.github.linpeilie.annotations.AutoMapper;
