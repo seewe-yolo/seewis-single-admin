@@ -4,6 +4,7 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.annotation.SaIgnore;
+import cn.hutool.core.convert.Convert;
 import io.swagger.v3.oas.models.Operation;
 import org.dromara.common.doc.core.model.SaTokenSecurityMetadata;
 import org.springframework.web.method.HandlerMethod;
@@ -113,13 +114,13 @@ public class SaTokenJavadocResolver implements SaTokenMetadataResolver {
             Object type = getAnnotationValue(annotation, "type");
             Object orRole = getAnnotationValue(annotation, "orRole");
 
-            String[] values = convertToStringArray(value);
+            String[] values = Convert.toStrArray(value);
             String modeStr = mode != null ? mode.toString() : "AND";
             String typeStr = type != null ? type.toString() : "";
-            String[] orRoles = convertToStringArray(orRole);
+            String[] orRoles = Convert.toStrArray(orRole);
 
             metadata.addPermission(values, modeStr, typeStr, orRoles);
-        } catch (Exception e) {
+        } catch (Exception ignore) {
             // 忽略解析错误
         }
     }
@@ -153,12 +154,12 @@ public class SaTokenJavadocResolver implements SaTokenMetadataResolver {
             Object mode = getAnnotationValue(annotation, "mode");
             Object type = getAnnotationValue(annotation, "type");
 
-            String[] values = convertToStringArray(value);
+            String[] values = Convert.toStrArray(value);
             String modeStr = mode != null ? mode.toString() : "AND";
             String typeStr = type != null ? type.toString() : "";
 
             metadata.addRole(values, modeStr, typeStr);
-        } catch (Exception e) {
+        } catch (Exception ignore) {
             // 忽略解析错误
         }
     }
@@ -179,22 +180,6 @@ public class SaTokenJavadocResolver implements SaTokenMetadataResolver {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    /**
-     * 转换为字符串数组
-     */
-    private String[] convertToStringArray(Object value) {
-        if (value == null) {
-            return new String[0];
-        }
-        if (value instanceof String[]) {
-            return (String[])value;
-        }
-        if (value instanceof String) {
-            return new String[] {(String)value};
-        }
-        return new String[0];
     }
 
 }

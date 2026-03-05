@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * SaToken 权限测试
+ * SaToken 权限测试 接口文档输出测试
  *
  * @author AprilWind
  */
 @Slf4j
 @RestController
-@RequestMapping("/demo/SaToken")
+@RequestMapping("/demo/saTokenDoc")
 public class SaTokenTestController {
 
     // ====================== 基础场景：单一校验规则 ======================

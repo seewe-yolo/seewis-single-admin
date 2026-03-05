@@ -228,21 +228,25 @@ public class OpenApiHandler extends OpenAPIService {
             else
                 securityParser.buildSecurityRequirement(securityRequirements, operation);
         }
-        String description = javadocProvider.get().getMethodJavadocDescription(handlerMethod.getMethod());
-        String summary = javadocProvider.get().getFirstSentence(description);
-        if (StringUtils.isNotBlank(description)){
-            operation.setSummary(summary);
-        }
-        // 调用SaToken解析器提取JavaDoc中的权限信息
-        if (saTokenJavadocResolver.supports(handlerMethod)) {
-            SaTokenSecurityMetadata metadata = new SaTokenSecurityMetadata();
-            saTokenJavadocResolver.resolve(handlerMethod, operation, metadata);
-            String markdownString = metadata.toMarkdownString();
-            if (StringUtils.isNotBlank(markdownString)) {
-                description = description + markdownString;
+
+        if (javadocProvider.isPresent()) {
+            String description = javadocProvider.get().getMethodJavadocDescription(handlerMethod.getMethod());
+            String summary = javadocProvider.get().getFirstSentence(description);
+            if (StringUtils.isNotBlank(description)){
+                operation.setSummary(summary);
             }
+            // 调用SaToken解析器提取JavaDoc中的权限信息
+            if (saTokenJavadocResolver.supports(handlerMethod)) {
+                SaTokenSecurityMetadata metadata = new SaTokenSecurityMetadata();
+                saTokenJavadocResolver.resolve(handlerMethod, operation, metadata);
+                String markdownString = metadata.toMarkdownString();
+                if (StringUtils.isNotBlank(markdownString)) {
+                    description = description + markdownString;
+                }
+            }
+            operation.setDescription(description);
         }
-        operation.setDescription(description);
+
         return operation;
     }
 
