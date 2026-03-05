@@ -12,6 +12,8 @@ import io.swagger.v3.oas.models.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.common.core.utils.StreamUtils;
+import org.dromara.common.doc.core.enhancer.SaTokenMetadataResolver;
+import org.dromara.common.doc.core.model.SaTokenSecurityMetadata;
 import org.springdoc.core.customizers.OpenApiBuilderCustomizer;
 import org.springdoc.core.customizers.ServerBaseUrlCustomizer;
 import org.springdoc.core.properties.SpringDocConfigProperties;
@@ -84,6 +86,11 @@ public class OpenApiHandler extends OpenAPIService {
     private final PropertyResolverUtils propertyResolverUtils;
 
     /**
+     * 权限元数据解析器接口
+     */
+    private final SaTokenMetadataResolver saTokenJavadocResolver;
+
+    /**
      * The javadoc provider.
      */
     private final Optional<JavadocProvider> javadocProvider;
@@ -123,7 +130,8 @@ public class OpenApiHandler extends OpenAPIService {
                           SpringDocConfigProperties springDocConfigProperties, PropertyResolverUtils propertyResolverUtils,
                           Optional<List<OpenApiBuilderCustomizer>> openApiBuilderCustomizers,
                           Optional<List<ServerBaseUrlCustomizer>> serverBaseUrlCustomizers,
-                          Optional<JavadocProvider> javadocProvider) {
+                          Optional<JavadocProvider> javadocProvider,
+                          SaTokenMetadataResolver saTokenJavadocResolver) {
         super(openAPI, securityParser, springDocConfigProperties, propertyResolverUtils, openApiBuilderCustomizers, serverBaseUrlCustomizers, javadocProvider);
         if (openAPI.isPresent()) {
             this.openAPI = openAPI.get();
@@ -140,6 +148,7 @@ public class OpenApiHandler extends OpenAPIService {
         this.openApiBuilderCustomisers = openApiBuilderCustomizers;
         this.serverBaseUrlCustomizers = serverBaseUrlCustomizers;
         this.javadocProvider = javadocProvider;
+        this.saTokenJavadocResolver = saTokenJavadocResolver;
         if (springDocConfigProperties.isUseFqn())
             TypeNameResolver.std.setUseFqn(true);
     }
@@ -219,7 +228,21 @@ public class OpenApiHandler extends OpenAPIService {
             else
                 securityParser.buildSecurityRequirement(securityRequirements, operation);
         }
-
+        String description = javadocProvider.get().getMethodJavadocDescription(handlerMethod.getMethod());
+        String summary = javadocProvider.get().getFirstSentence(description);
+        if (StringUtils.isNotBlank(description)){
+            operation.setSummary(summary);
+        }
+        // 调用SaToken解析器提取JavaDoc中的权限信息
+        if (saTokenJavadocResolver.supports(handlerMethod)) {
+            SaTokenSecurityMetadata metadata = new SaTokenSecurityMetadata();
+            saTokenJavadocResolver.resolve(handlerMethod, operation, metadata);
+            String markdownString = metadata.toMarkdownString();
+            if (StringUtils.isNotBlank(markdownString)) {
+                description = description + markdownString;
+            }
+        }
+        operation.setDescription(description);
         return operation;
     }
 

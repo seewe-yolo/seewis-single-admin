@@ -8,6 +8,8 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.doc.config.properties.SpringDocProperties;
+import org.dromara.common.doc.core.enhancer.SaTokenJavadocResolver;
+import org.dromara.common.doc.core.enhancer.SaTokenMetadataResolver;
 import org.dromara.common.doc.handler.OpenApiHandler;
 import org.springdoc.core.configuration.SpringDocConfiguration;
 import org.springdoc.core.customizers.OpenApiBuilderCustomizer;
@@ -88,8 +90,9 @@ public class SpringDocConfig {
                                          SecurityService securityParser,
                                          SpringDocConfigProperties springDocConfigProperties, PropertyResolverUtils propertyResolverUtils,
                                          Optional<List<OpenApiBuilderCustomizer>> openApiBuilderCustomisers,
-                                         Optional<List<ServerBaseUrlCustomizer>> serverBaseUrlCustomisers, Optional<JavadocProvider> javadocProvider) {
-        return new OpenApiHandler(openAPI, securityParser, springDocConfigProperties, propertyResolverUtils, openApiBuilderCustomisers, serverBaseUrlCustomisers, javadocProvider);
+                                         Optional<List<ServerBaseUrlCustomizer>> serverBaseUrlCustomisers, Optional<JavadocProvider> javadocProvider,
+                                         SaTokenMetadataResolver saTokenMetadataResolver) {
+        return new OpenApiHandler(openAPI, securityParser, springDocConfigProperties, propertyResolverUtils, openApiBuilderCustomisers, serverBaseUrlCustomisers, javadocProvider, saTokenMetadataResolver);
     }
 
     /**
@@ -114,6 +117,14 @@ public class SpringDocConfig {
             oldPaths.forEach((k, v) -> newPaths.addPathItem(finalContextPath + k, v));
             openApi.setPaths(newPaths);
         };
+    }
+
+    /**
+     * 注册JavaDoc权限解析器
+     */
+    @Bean
+    public SaTokenMetadataResolver saTokenJavadocResolver() {
+        return new SaTokenJavadocResolver();
     }
 
     /**
