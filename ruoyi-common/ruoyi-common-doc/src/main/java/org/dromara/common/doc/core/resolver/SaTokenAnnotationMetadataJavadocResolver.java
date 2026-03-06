@@ -27,10 +27,11 @@ public class SaTokenAnnotationMetadataJavadocResolver extends AbstractMetadataJa
      */
     public static final Supplier<SaTokenSecurityMetadata> DEFAULT_METADATA_PROVIDER = SaTokenSecurityMetadata::new;
 
-    private static final String SA_CHECK_ROLE_CLASS_NAME = "cn.dev33.satoken.annotation.SaCheckRole";
-    private static final String SA_CHECK_PERMISSION_CLASS_NAME = "cn.dev33.satoken.annotation.SaCheckPermission";
-    private static final String SA_IGNORE_CLASS_NAME = "cn.dev33.satoken.annotation.SaIgnore";
-    private static final String SA_CHECK_LOGIN_NAME = "cn.dev33.satoken.annotation.SaCheckLogin";
+    private static final String BASE_CLASS_NAME = "cn.dev33.satoken.annotation";
+    private static final String SA_CHECK_ROLE_CLASS_NAME = BASE_CLASS_NAME + ".SaCheckRole";
+    private static final String SA_CHECK_PERMISSION_CLASS_NAME = BASE_CLASS_NAME + ".SaCheckPermission";
+    private static final String SA_IGNORE_CLASS_NAME = BASE_CLASS_NAME + ".SaIgnore";
+    private static final String SA_CHECK_LOGIN_NAME = BASE_CLASS_NAME + ".SaCheckLogin";
 
     private static final Class<? extends Annotation> SA_CHECK_ROLE_CLASS;
     private static final Class<? extends Annotation> SA_CHECK_PERMISSION_CLASS;
@@ -44,8 +45,8 @@ public class SaTokenAnnotationMetadataJavadocResolver extends AbstractMetadataJa
         SA_CHECK_PERMISSION_CLASS = (Class<? extends Annotation>) ClassLoaderUtil.loadClass(SA_CHECK_PERMISSION_CLASS_NAME, false);
         SA_IGNORE_CLASS = (Class<? extends Annotation>) ClassLoaderUtil.loadClass(SA_IGNORE_CLASS_NAME, false);
         SA_CHECK_LOGIN_CLASS = (Class<? extends Annotation>) ClassLoaderUtil.loadClass(SA_CHECK_LOGIN_NAME, false);
-        if (log.isInfoEnabled()) {
-            log.info("SaTokenAnnotationJavadocResolver init success, load annotation class: {}", List.of(SA_CHECK_ROLE_CLASS, SA_CHECK_PERMISSION_CLASS, SA_IGNORE_CLASS, SA_CHECK_LOGIN_CLASS));
+        if (log.isDebugEnabled()) {
+            log.debug("SaTokenAnnotationJavadocResolver init success, load annotation class: {}", List.of(SA_CHECK_ROLE_CLASS, SA_CHECK_PERMISSION_CLASS, SA_IGNORE_CLASS, SA_CHECK_LOGIN_CLASS));
         }
     }
 
