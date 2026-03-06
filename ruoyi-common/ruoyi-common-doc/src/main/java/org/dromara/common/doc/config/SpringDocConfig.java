@@ -8,8 +8,8 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.doc.config.properties.SpringDocProperties;
-import org.dromara.common.doc.core.enhancer.SaTokenJavadocResolver;
-import org.dromara.common.doc.core.enhancer.SaTokenMetadataResolver;
+import org.dromara.common.doc.core.resolver.JavadocResolver;
+import org.dromara.common.doc.core.resolver.SaTokenAnnotationMetadataJavadocResolver;
 import org.dromara.common.doc.handler.OpenApiHandler;
 import org.springdoc.core.configuration.SpringDocConfiguration;
 import org.springdoc.core.customizers.OpenApiBuilderCustomizer;
@@ -91,8 +91,8 @@ public class SpringDocConfig {
                                          SpringDocConfigProperties springDocConfigProperties, PropertyResolverUtils propertyResolverUtils,
                                          Optional<List<OpenApiBuilderCustomizer>> openApiBuilderCustomisers,
                                          Optional<List<ServerBaseUrlCustomizer>> serverBaseUrlCustomisers, Optional<JavadocProvider> javadocProvider,
-                                         SaTokenMetadataResolver saTokenMetadataResolver) {
-        return new OpenApiHandler(openAPI, securityParser, springDocConfigProperties, propertyResolverUtils, openApiBuilderCustomisers, serverBaseUrlCustomisers, javadocProvider, saTokenMetadataResolver);
+                                         List<JavadocResolver> javadocResolvers) {
+        return new OpenApiHandler(openAPI, securityParser, springDocConfigProperties, propertyResolverUtils, openApiBuilderCustomisers, serverBaseUrlCustomisers, javadocProvider, javadocResolvers);
     }
 
     /**
@@ -120,11 +120,11 @@ public class SpringDocConfig {
     }
 
     /**
-     * 注册JavaDoc权限解析器
+     * 注册SaToken JavaDoc权限注解解析器
      */
     @Bean
-    public SaTokenMetadataResolver saTokenJavadocResolver() {
-        return new SaTokenJavadocResolver();
+    public JavadocResolver saTokenAnnotationJavadocResolver() {
+        return new SaTokenAnnotationMetadataJavadocResolver();
     }
 
     /**
