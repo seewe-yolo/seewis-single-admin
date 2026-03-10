@@ -232,7 +232,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     }
 
     /**
-     * 校验用户名称是否唯一
+     * 校验用户账号是否唯一
      *
      * @param user 用户信息
      * @return 结果
@@ -761,7 +761,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @return Map，其中 key 为用户 ID，value 为对应的用户昵称
      */
     @Override
-    public Map<Long, String> selectUserNamesByIds(List<Long> userIds) {
+    public Map<Long, String> selectUserNicksByIds(List<Long> userIds) {
         if (CollUtil.isEmpty(userIds)) {
             return Collections.emptyMap();
         }
