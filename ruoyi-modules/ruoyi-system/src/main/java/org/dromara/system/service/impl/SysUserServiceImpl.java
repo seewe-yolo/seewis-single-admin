@@ -598,10 +598,10 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     }
 
     /**
-     * 通过用户ID查询用户账户
+     * 通过用户ID查询用户昵称
      *
      * @param userId 用户ID
-     * @return 用户账户
+     * @return 用户昵称
      */
     @Override
     @Cacheable(cacheNames = CacheNames.SYS_NICKNAME, key = "#userId")
@@ -612,10 +612,10 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     }
 
     /**
-     * 通过用户ID查询用户账户
+     * 通过用户ID查询用户昵称
      *
      * @param userIds 用户ID 多个用逗号隔开
-     * @return 用户账户
+     * @return 用户昵称
      */
     @Override
     public String selectNicknameByIds(String userIds) {
@@ -755,10 +755,10 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     }
 
     /**
-     * 根据用户 ID 列表查询用户名称映射关系
+     * 根据用户 ID 列表查询用户昵称映射关系
      *
      * @param userIds 用户 ID 列表
-     * @return Map，其中 key 为用户 ID，value 为对应的用户名称
+     * @return Map，其中 key 为用户 ID，value 为对应的用户昵称
      */
     @Override
     public Map<Long, String> selectUserNamesByIds(List<Long> userIds) {
