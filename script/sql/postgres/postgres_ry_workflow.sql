@@ -449,7 +449,7 @@ INSERT INTO sys_menu VALUES ('11618', '我的任务', '0', '7', 'task', '', '', 
 INSERT INTO sys_menu VALUES ('11619', '我的待办', '11618', '2', 'taskWaiting', 'workflow/task/taskWaiting', '', '1', '1', 'C', '0', '0', '', 'waiting', 103, 1, now(), NULL, NULL, '');
 INSERT INTO sys_menu VALUES ('11632', '我的已办', '11618', '3', 'taskFinish', 'workflow/task/taskFinish', '', '1', '1', 'C', '0', '0', '', 'finish', 103, 1, now(), NULL, NULL, '');
 INSERT INTO sys_menu VALUES ('11633', '我的抄送', '11618', '4', 'taskCopyList', 'workflow/task/taskCopyList', '', '1', '1', 'C', '0', '0', '', 'my-copy', 103, 1, now(), NULL, NULL, '');
-INSERT INTO sys_menu VALUES ('11620', '流程定义', '11616', '3', 'processDefinition', 'workflow/processDefinition/index', '', '1', '1', 'C', '0', '0', '', 'process-definition', 103, 1, now(), NULL, NULL, '');
+INSERT INTO sys_menu VALUES ('11620', '流程定义', '11616', '3', 'processDefinition', 'workflow/processDefinition/index', '', '1', '1', 'C', '0', '0', 'workflow:definition:list', 'process-definition', 103, 1, now(), NULL, NULL, '');
 INSERT INTO sys_menu VALUES ('11621', '流程实例', '11630', '1', 'processInstance', 'workflow/processInstance/index', '', '1', '1', 'C', '0', '0', '', 'tree-table', 103, 1, now(), NULL, NULL, '');
 INSERT INTO sys_menu VALUES ('11622', '流程分类', '11616', '1', 'category', 'workflow/category/index', '', '1', '0', 'C', '0', '0', 'workflow:category:list', 'category', 103, 1, now(), NULL, NULL, '');
 INSERT INTO sys_menu VALUES ('11629', '我发起的', '11618', '1', 'myDocument', 'workflow/task/myDocument', '', '1', '1', 'C', '0', '0', '', 'guide', 103, 1, now(), NULL, NULL, '');
@@ -463,6 +463,17 @@ INSERT INTO sys_menu VALUES ('11624', '流程分类新增', '11622', '2', '#', '
 INSERT INTO sys_menu VALUES ('11625', '流程分类修改', '11622', '3', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:category:edit', '#', 103, 1, now(), NULL, NULL, '');
 INSERT INTO sys_menu VALUES ('11626', '流程分类删除', '11622', '4', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:category:remove', '#', 103, 1, now(), NULL, NULL, '');
 INSERT INTO sys_menu VALUES ('11627', '流程分类导出', '11622', '5', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:category:export', '#', 103, 1, now(), NULL, NULL, '');
+
+-- 流程定义管理相关按钮
+INSERT INTO sys_menu VALUES ('11644', '流程定义查询', '11620', '1', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:definition:query', '#', 103, 1, now(), NULL, NULL, '');
+INSERT INTO sys_menu VALUES ('11645', '流程定义新增', '11620', '2', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:definition:add', '#', 103, 1, now(), NULL, NULL, '');
+INSERT INTO sys_menu VALUES ('11646', '流程定义修改', '11620', '3', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:definition:edit', '#', 103, 1, now(), NULL, NULL, '');
+INSERT INTO sys_menu VALUES ('11647', '流程定义删除', '11620', '4', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:definition:remove', '#', 103, 1, now(), NULL, NULL, '');
+INSERT INTO sys_menu VALUES ('11648', '流程定义导出', '11620', '5', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:definition:export', '#', 103, 1, now(), NULL, NULL, '');
+INSERT INTO sys_menu VALUES ('11649', '流程定义导入', '11620', '6', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:definition:import', '#', 103, 1, now(), NULL, NULL, '');
+INSERT INTO sys_menu VALUES ('11650', '流程定义发布/取消发布', '11620', '7', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:definition:publish', '#', 103, 1, now(), NULL, NULL, '');
+INSERT INTO sys_menu VALUES ('11651', '流程定义复制', '11620', '8', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:definition:copy', '#', 103, 1, now(), NULL, NULL, '');
+INSERT INTO sys_menu VALUES ('11652', '流程定义激活/挂起', '11620', '9', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:definition:active', '#', 103, 1, now(), NULL, NULL, '');
 
 INSERT INTO sys_menu VALUES ('11801', '流程表达式', '11616', 2, 'spel', 'workflow/spel/index', '', 1, 0, 'C', '0', '0', 'workflow:spel:list', 'input', 103, 1, now(), 1, now(), '流程达式定义菜单');
 INSERT INTO sys_menu VALUES ('11802', '流程spel表达式定义查询', '11801', 1, '#', '', NULL, 1, 0, 'F', '0', '0', 'workflow:spel:query', '#', 103, 1, now(), NULL, NULL, '');
