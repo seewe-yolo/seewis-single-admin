@@ -157,7 +157,7 @@ public class FlwInstanceController extends BaseController {
      */
     @GetMapping("/flowHisTaskList/{businessId}")
     @SaCheckPermission("workflow:instance:query")
-       public R<Map<String, Object>> flowHisTaskList(@PathVariable String businessId) {
+    public R<Map<String, Object>> flowHisTaskList(@PathVariable String businessId) {
         return R.ok(flwInstanceService.flowHisTaskList(businessId));
     }
 
