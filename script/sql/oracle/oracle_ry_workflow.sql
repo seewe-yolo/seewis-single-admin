@@ -488,10 +488,12 @@ INSERT INTO sys_menu VALUES ('11627', '流程分类导出', '11622', '5', '#', '
 
 -- 流程实例管理相关按钮
 INSERT INTO sys_menu VALUES ('11653', '流程实例查询', '11621', '1', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:instance:query', '#', 103, 1, SYSDATE, NULL, NULL, '');
-INSERT INTO sys_menu VALUES ('11654', '流程变量查询', '11621', '2', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:instance:variable', '#', 103, 1, SYSDATE, NULL, NULL, '');
+INSERT INTO sys_menu VALUES ('11654', '流程变量查询', '11621', '2', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:instance:variableQuery', '#', 103, 1, SYSDATE, NULL, NULL, '');
 INSERT INTO sys_menu VALUES ('11655', '流程变量修改', '11621', '3', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:instance:variable', '#', 103, 1, SYSDATE, NULL, NULL, '');
 INSERT INTO sys_menu VALUES ('11656', '流程实例激活/挂起', '11621', '4', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:instance:active', '#', 103, 1, SYSDATE, NULL, NULL, '');
 INSERT INTO sys_menu VALUES ('11657', '流程实例删除', '11621', '5', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:instance:remove', '#', 103, 1, SYSDATE, NULL, NULL, '');
+INSERT INTO sys_menu VALUES ('11658', '流程实例作废', '11621', '6', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:instance:invalid', '#', 103, 1, SYSDATE, NULL, NULL, '');
+INSERT INTO sys_menu VALUES ('11659', '流程实例撤销', '11621', '7', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:instance:cancel', '#', 103, 1, SYSDATE, NULL, NULL, '');
 
 -- 流程定义管理相关按钮
 INSERT INTO sys_menu VALUES ('11644', '流程定义查询', '11620', '1', '#', '', '', '1', '0', 'F', '0', '0', 'workflow:definition:query', '#', 103, 1, SYSDATE, NULL, NULL, '');

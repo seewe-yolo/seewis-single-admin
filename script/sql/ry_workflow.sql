@@ -284,6 +284,8 @@ insert into sys_menu values ('11654', '流程变量查询', '11621', '2', '#', '
 insert into sys_menu values ('11655', '流程变量修改', '11621', '3', '#', '', '', 1, 0, 'F', '0', '0', 'workflow:instance:variable', '#', 103, 1, sysdate(), null, null, '');
 insert into sys_menu values ('11656', '流程实例激活/挂起', '11621', '4', '#', '', '', 1, 0, 'F', '0', '0', 'workflow:instance:active', '#', 103, 1, sysdate(), null, null, '');
 insert into sys_menu values ('11657', '流程实例删除', '11621', '5', '#', '', '', 1, 0, 'F', '0', '0', 'workflow:instance:remove', '#', 103, 1, sysdate(), null, null, '');
+insert into sys_menu values ('11658', '流程实例作废', '11621', '6', '#', '', '', 1, 0, 'F', '0', '0', 'workflow:instance:invalid', '#', 103, 1, sysdate(), null, null, '');
+insert into sys_menu values ('11659', '流程实例撤销', '11621', '7', '#', '', '', 1, 0, 'F', '0', '0', 'workflow:instance:cancel', '#', 103, 1, sysdate(), null, null, '');
 
 -- 流程定义管理相关按钮
 insert into sys_menu values ('11644', '流程定义查询', '11620', '1', '#', '', '', 1, 0, 'F', '0', '0', 'workflow:definition:query', '#', 103, 1, sysdate(), null, null, '');

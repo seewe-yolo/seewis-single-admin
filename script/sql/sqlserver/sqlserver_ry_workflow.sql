@@ -1595,13 +1595,17 @@ GO
 -- 流程实例管理相关按钮
 INSERT sys_menu VALUES (11653, N'流程实例查询', 11621, 1, N'#', N'', N'', 1, 0, N'F', N'0', N'0', N'workflow:instance:query', N'#', 103, 1, GETDATE(), NULL, NULL, N'');
 GO
-INSERT sys_menu VALUES (11654, N'流程变量查询', 11621, 2, N'#', N'', N'', 1, 0, N'F', N'0', N'0', N'workflow:instance:variable', N'#', 103, 1, GETDATE(), NULL, NULL, N'');
+INSERT sys_menu VALUES (11654, N'流程变量查询', 11621, 2, N'#', N'', N'', 1, 0, N'F', N'0', N'0', N'workflow:instance:variableQuery', N'#', 103, 1, GETDATE(), NULL, NULL, N'');
 GO
 INSERT sys_menu VALUES (11655, N'流程变量修改', 11621, 3, N'#', N'', N'', 1, 0, N'F', N'0', N'0', N'workflow:instance:variable', N'#', 103, 1, GETDATE(), NULL, NULL, N'');
 GO
 INSERT sys_menu VALUES (11656, N'流程实例激活/挂起', 11621, 4, N'#', N'', N'', 1, 0, N'F', N'0', N'0', N'workflow:instance:active', N'#', 103, 1, GETDATE(), NULL, NULL, N'');
 GO
 INSERT sys_menu VALUES (11657, N'流程实例删除', 11621, 5, N'#', N'', N'', 1, 0, N'F', N'0', N'0', N'workflow:instance:remove', N'#', 103, 1, GETDATE(), NULL, NULL, N'');
+GO
+INSERT sys_menu VALUES (11658, N'流程实例作废', 11621, 6, N'#', N'', N'', 1, 0, N'F', N'0', N'0', N'workflow:instance:invalid', N'#', 103, 1, GETDATE(), NULL, NULL, N'');
+GO
+INSERT sys_menu VALUES (11659, N'流程实例撤销', 11621, 7, N'#', N'', N'', 1, 0, N'F', N'0', N'0', N'workflow:instance:cancel', N'#', 103, 1, GETDATE(), NULL, NULL, N'');
 GO
 
 INSERT sys_menu VALUES (11801, N'流程表达式', N'11616', 2, N'spel', N'workflow/spel/index', N'', 1, 0, N'C', N'0', N'0', N'workflow:spel:list', N'input', 103, 1, GETDATE(), 1, GETDATE(), N'流程达式定义菜单');
