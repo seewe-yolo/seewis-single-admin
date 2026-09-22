@@ -261,7 +261,7 @@ insert into sys_menu values ('11616', '工作流', '0', '6', 'workflow', '', '',
 insert into sys_menu values ('11618', '我的任务', '0', '7', 'task', '', '', '1', '0', 'M', '0', '0', '', 'my-task', 103, 1, sysdate(), NULL, NULL, '');
 insert into sys_menu values ('11619', '我的待办', '11618', '2', 'taskWaiting', 'workflow/task/taskWaiting', '', '1', '1', 'C', '0', '0', '', 'waiting', 103, 1, sysdate(), NULL, NULL, '');
 insert into sys_menu values ('11632', '我的已办', '11618', '3', 'taskFinish', 'workflow/task/taskFinish', '', '1', '1', 'C', '0', '0', '', 'finish', 103, 1, sysdate(), NULL, NULL, '');
-insert into sys_menu values ('11633', '我的抄送', '11618', '4', 'taskCopyList', 'workflow/task/taskCopyList', '', '1', '1', 'C', '0', '0', '', 'my-copy', 103, 1, sysdate(), NULL, NULL, '');
+insert into sys_menu values ('11633', '我的抄送', '11618', '4', 'taskCopy', 'workflow/task/taskCopy/index', '', '1', '1', 'C', '0', '0', '', 'my-copy', 103, 1, sysdate(), NULL, NULL, '');
 insert into sys_menu values ('11620', '流程定义', '11616', '3', 'processDefinition', 'workflow/processDefinition/index', '', '1', '1', 'C', '0', '0', 'workflow:definition:list', 'process-definition', 103, 1, sysdate(), NULL, NULL, '');
 insert into sys_menu values ('11621', '流程实例', '11630', '1', 'processInstance', 'workflow/processInstance/index', '', '1', '1', 'C', '0', '0', 'workflow:instance:list', 'tree-table', 103, 1, sysdate(), NULL, NULL, '');
 insert into sys_menu values ('11622', '流程分类', '11616', '1', 'category', 'workflow/category/index', '', '1', '0', 'C', '0', '0', 'workflow:category:list', 'category', 103, 1, sysdate(), NULL, NULL, '');
@@ -270,8 +270,8 @@ insert into sys_menu values ('11629', '我发起的', '11618', '1', 'myDocument'
 insert into sys_menu values ('11630', '流程监控', '11616', '4', 'processMonitor', '', '', '1', '0', 'M', '0', '0', '', 'monitor', 103, 1, sysdate(), NULL, NULL, '');
 insert into sys_menu values ('11631', '待办任务', '11630', '2', 'allTaskWaiting', 'workflow/task/allTaskWaiting', '', '1', '1', 'C', '0', '0', 'workflow:task:list', 'waiting', 103, 1, sysdate(), NULL, NULL, '');
 insert into sys_menu values ('11660', '待办任务修改', '11631', '1', '#', '', '', 1, 0, 'F', '0', '0', 'workflow:task:edit', '#', 103, 1, sysdate(), null, null, '');
-insert into sys_menu values ('11700', '流程设计', '11616', '5', 'design/index',   'workflow/processDefinition/design', '', 1, 1, 'C', '1', '0', 'workflow:leave:edit', '#', 103, 1, sysdate(), null, null, '/workflow/processDefinition');
-insert into sys_menu values ('11701', '请假申请', '11616', '6', 'leaveEdit/index', 'workflow/leave/leaveEdit', '', 1, 1, 'C', '1', '0', 'workflow:leave:edit', '#', 103, 1, sysdate(), null, null, '');
+insert into sys_menu values ('11700', '流程设计', '11616', '5', 'design', 'workflow/design/index', '', 1, 1, 'C', '1', '0', 'workflow:leave:edit', '#', 103, 1, sysdate(), null, null, '/workflow/processDefinition');
+insert into sys_menu values ('11701', '请假申请', '11616', '6', 'leave', 'workflow/leave/index', '', 1, 1, 'C', '1', '0', 'workflow:leave:edit', '#', 103, 1, sysdate(), null, null, '');
 -- 流程分类管理相关按钮
 insert into sys_menu values ('11623', '流程分类查询', '11622', '1', '#', '', '', 1, 0, 'F', '0', '0', 'workflow:category:query', '#', 103, 1,sysdate(), null, null, '');
 insert into sys_menu values ('11624', '流程分类新增', '11622', '2', '#', '', '', 1, 0, 'F', '0', '0', 'workflow:category:add', '#', 103, 1,sysdate(), null, null, '');
@@ -363,8 +363,35 @@ UPDATE `sys_dict_data` SET `dict_label` = 'dict.wf_task_status.copy', `dict_type
 UPDATE `sys_dict_data` SET `dict_label` = 'dict.wf_task_status.add_sign', `dict_type` = 'wf_task_status' WHERE `dict_code` = 57;
 UPDATE `sys_dict_data` SET `dict_label` = 'dict.wf_task_status.minus_sign', `dict_type` = 'wf_task_status' WHERE `dict_code` = 58;
 UPDATE `sys_dict_data` SET `dict_label` = 'dict.wf_task_status.timeout', `dict_type` = 'wf_task_status' WHERE `dict_code` = 59;
-UPDATE `sys_menu` SET `status` = '1' WHERE `menu_id` IN ('11616', '11618', '11638', '11700', '11701');
+-- 开放工作流相关菜单。
+UPDATE `sys_menu` SET `status` = '0', `visible` = '0' WHERE `menu_id` IN ('11616', '11618', '11638', '11700', '11701');
 
 -- 顶级菜单排序：工作流菜单放到业务模块之后。
 UPDATE `sys_menu` SET `order_num` = 24 WHERE `menu_id` = 11616;
 UPDATE `sys_menu` SET `order_num` = 25 WHERE `menu_id` = 11618;
+
+-- 工作流菜单图标适配。
+UPDATE `sys_menu`
+SET `icon` = CASE `menu_id`
+    WHEN 11616 THEN 'local-icon-workflow'
+    WHEN 11618 THEN 'local-icon-my-task'
+    WHEN 11619 THEN 'local-icon-waiting'
+    WHEN 11632 THEN 'local-icon-finish'
+    WHEN 11633 THEN 'local-icon-my-copy'
+    WHEN 11620 THEN 'local-icon-process-definition'
+    WHEN 11621 THEN 'local-icon-tree-table'
+    WHEN 11622 THEN 'local-icon-category'
+    WHEN 11801 THEN 'local-icon-input'
+    WHEN 11629 THEN 'local-icon-guide'
+    WHEN 11630 THEN 'local-icon-monitor'
+    WHEN 11631 THEN 'local-icon-waiting'
+    WHEN 11638 THEN 'local-icon-form'
+    WHEN 11700 THEN 'local-icon-edit'
+    WHEN 11701 THEN 'local-icon-edit'
+END
+WHERE `menu_id` IN (11616, 11618, 11619, 11632, 11633, 11620, 11621, 11622, 11801, 11629, 11630, 11631, 11638, 11700, 11701);
+
+-- 工作流菜单组件路径适配。
+UPDATE `sys_menu` SET `path` = 'taskCopy', `component` = 'workflow/task/taskCopy/index' WHERE `menu_id` = 11633;
+UPDATE `sys_menu` SET `path` = 'design', `component` = 'workflow/design/index' WHERE `menu_id` = 11700;
+UPDATE `sys_menu` SET `path` = 'leave', `component` = 'workflow/leave/index' WHERE `menu_id` = 11701;
