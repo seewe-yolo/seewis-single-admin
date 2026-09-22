@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="SeewisApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="SPRING_BOOT_MAIN_CLASS" value="org.dromara.SeewisApplication" />
+    <module name="seewis-admin" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
