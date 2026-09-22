@@ -8,7 +8,7 @@
 3. 不保证稳定性，生产使用请谨慎
 4. 定期同步原项目Bug修复和新功能
 5. 本项目不接受PR，PR请到原项目提 [RuoYi-Vue-Plus](https://gitee.com/dromara/RuoYi-Vue-Plus)
-6. 本项目**不维护**原项目的`版本SQL变更`,仅**维护**原项目`主SQL`文件。版本升级请留意原项目`版本SQL变更`记录。[点击查看](https://gitee.com/dromara/RuoYi-Vue-Plus/tree/5.X/script/sql/update)
+6. 本项目使用 Liquibase 管理数据库建表、初始化数据和增量变更，脚本位于 `seewis-admin/src/main/resources/db/changelog`，不再维护旧版 `script/sql` 初始化脚本
 
 ## 分支说明
 - `5.X`分支
