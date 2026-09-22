@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dromara.web.mapper.DashboardMapper">
+
+    <select id="selectTrend" resultType="org.dromara.web.domain.vo.DashboardTrendRow">
+        SELECT dashboard_date AS date,
+               SUM(user_count) AS userCount,
+               SUM(notice_count) AS noticeCount,
+               SUM(operation_count) AS operationCount
+        FROM (
+            SELECT DATE_FORMAT(create_time, '%Y-%m-%d') AS dashboard_date,
+                   COUNT(*) AS user_count,
+                   0 AS notice_count,
+                   0 AS operation_count
+            FROM sys_user
+            WHERE del_flag = '0'
+              AND create_time <![CDATA[ >= ]]> #{startTime}
+              AND create_time <![CDATA[ < ]]> #{endTime}
+            GROUP BY DATE_FORMAT(create_time, '%Y-%m-%d')
+            UNION ALL
+            SELECT DATE_FORMAT(create_time, '%Y-%m-%d') AS dashboard_date,
+                   0 AS user_count,
+                   COUNT(*) AS notice_count,
+                   0 AS operation_count
+            FROM sys_notice
+            WHERE status = '0'
+              AND create_time <![CDATA[ >= ]]> #{startTime}
+              AND create_time <![CDATA[ < ]]> #{endTime}
+            GROUP BY DATE_FORMAT(create_time, '%Y-%m-%d')
+            UNION ALL
+            SELECT DATE_FORMAT(oper_time, '%Y-%m-%d') AS dashboard_date,
+                   0 AS user_count,
+                   0 AS notice_count,
+                   COUNT(*) AS operation_count
+            FROM sys_oper_log
+            WHERE oper_time <![CDATA[ >= ]]> #{startTime}
+              AND oper_time <![CDATA[ < ]]> #{endTime}
+            GROUP BY DATE_FORMAT(oper_time, '%Y-%m-%d')
+        ) dashboard_trend
+        GROUP BY dashboard_date
+        ORDER BY dashboard_date
+    </select>
+
+    <select id="selectUserStatusDistribution" resultType="org.dromara.web.domain.vo.DashboardDistributionRow">
+        SELECT status AS code, COUNT(*) AS count
+        FROM sys_user
+        WHERE del_flag = '0'
+        GROUP BY status
+        ORDER BY status
+    </select>
+
+</mapper>

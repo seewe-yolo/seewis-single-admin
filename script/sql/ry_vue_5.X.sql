@@ -197,6 +197,9 @@ create table sys_menu (
 insert into sys_menu values('1', '系统管理', '0', '1', 'system',           null, '', 1, 0, 'M', '0', '0', '', 'system',   103, 1, sysdate(), null, null, '系统管理目录');
 insert into sys_menu values('2', '系统监控', '0', '3', 'monitor',          null, '', 1, 0, 'M', '0', '0', '', 'monitor',  103, 1, sysdate(), null, null, '系统监控目录');
 insert into sys_menu values('3', '系统工具', '0', '4', 'tool',             null, '', 1, 0, 'M', '0', '0', '', 'tool',     103, 1, sysdate(), null, null, '系统工具目录');
+insert into sys_menu values('2000', 'route.dashboard', '0', '1', 'dashboard', null, '', 1, 0, 'M', '0', '0', '', 'mdi:view-dashboard-outline', 103, 1, sysdate(), null, null, '仪表盘目录');
+insert into sys_menu values('2001', 'route.dashboard_workbench', '2000', '1', 'workbench', 'dashboard/workbench/index', '', 1, 0, 'C', '0', '0', 'dashboard:workbench', 'mdi:briefcase-outline', 103, 1, sysdate(), null, null, '工作台');
+insert into sys_menu values('2002', 'route.dashboard_analysis', '2000', '2', 'analysis', 'dashboard/analysis/index', '', 1, 0, 'C', '0', '0', 'dashboard:analysis', 'mdi:chart-line', 103, 1, sysdate(), null, null, '数据分析');
 -- 二级菜单
 insert into sys_menu values('100',  '用户管理',     '1',   '1', 'user',             'system/user/index',            '', 1, 0, 'C', '0', '0', 'system:user:list',            'user',          103, 1, sysdate(), null, null, '用户管理菜单');
 insert into sys_menu values('101',  '角色管理',     '1',   '2', 'role',             'system/role/index',            '', 1, 0, 'C', '0', '0', 'system:role:list',            'peoples',       103, 1, sysdate(), null, null, '角色管理菜单');
@@ -782,3 +785,9 @@ UPDATE `sys_menu` SET `path` = 'oss/config', `component` = 'system/oss-config/in
 UPDATE `sys_menu` SET `component` = 'FrameView', `query_param` = '{"url":"https://ruoyi.xlsea.cn/admin/"}', `is_frame` = 2, `icon` = 'bx:bxl-spring-boot', `menu_name` = 'menu.monitor_admin' WHERE `menu_id` = 117;
 UPDATE `sys_menu` SET `component` = 'FrameView', `query_param` = '{"url":"https://preview.snailjob.opensnail.com/"}', `is_frame` = 2, `icon` = 'gridicons:scheduled', `menu_name` = 'menu.monitor_snail-job' WHERE `menu_id` = 120;
 UPDATE `sys_menu` SET `status` = '1' WHERE `menu_id` IN ('116', '130', '131', '132');
+
+-- 顶级菜单排序：仪表盘置顶，预留 1-20 给业务模块。
+UPDATE `sys_menu` SET `order_num` = 1 WHERE `menu_id` = 2000;
+UPDATE `sys_menu` SET `order_num` = 21 WHERE `menu_id` = 1;
+UPDATE `sys_menu` SET `order_num` = 22 WHERE `menu_id` = 2;
+UPDATE `sys_menu` SET `order_num` = 23 WHERE `menu_id` = 3;

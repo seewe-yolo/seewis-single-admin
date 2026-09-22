@@ -364,3 +364,7 @@ UPDATE `sys_dict_data` SET `dict_label` = 'dict.wf_task_status.add_sign', `dict_
 UPDATE `sys_dict_data` SET `dict_label` = 'dict.wf_task_status.minus_sign', `dict_type` = 'wf_task_status' WHERE `dict_code` = 58;
 UPDATE `sys_dict_data` SET `dict_label` = 'dict.wf_task_status.timeout', `dict_type` = 'wf_task_status' WHERE `dict_code` = 59;
 UPDATE `sys_menu` SET `status` = '1' WHERE `menu_id` IN ('11616', '11618', '11638', '11700', '11701');
+
+-- 顶级菜单排序：工作流菜单放到业务模块之后。
+UPDATE `sys_menu` SET `order_num` = 24 WHERE `menu_id` = 11616;
+UPDATE `sys_menu` SET `order_num` = 25 WHERE `menu_id` = 11618;

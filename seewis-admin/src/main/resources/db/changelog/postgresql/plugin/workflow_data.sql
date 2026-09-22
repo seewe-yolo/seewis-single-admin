@@ -200,3 +200,8 @@ UPDATE sys_dict_data SET dict_label = 'dict.wf_task_status.timeout', dict_type =
 
 -- 禁用当前管理端不使用的工作流页面。
 UPDATE sys_menu SET status = '1' WHERE menu_id IN ('11616', '11618', '11638', '11700', '11701');
+
+-- changeset seewis:3
+-- comment 调整工作流顶级菜单顺序
+UPDATE sys_menu SET order_num = 24 WHERE menu_id = 11616;
+UPDATE sys_menu SET order_num = 25 WHERE menu_id = 11618;

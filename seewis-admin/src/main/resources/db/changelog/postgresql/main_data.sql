@@ -734,3 +734,16 @@ UPDATE sys_menu SET menu_name = 'RuoYi-Vue-Plus', order_num = 100, path = 'https
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache, menu_type, visible, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark) VALUES (7, 'Soybean Admin', 0, 100, 'https://github.com/soybeanjs', 'FrameView', '', 0, 0, 'M', '0', '0', '', 'mdi:github', 103, 1, now(), null, null, 'Soybean Admin 仓库地址') ON CONFLICT (menu_id) DO UPDATE SET update_time = now();
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache, menu_type, visible, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark) VALUES (8, 'RuoYi-Plus-Soybean', 0, 100, 'https://gitee.com/xlsea/ruoyi-plus-soybean', 'FrameView', '', 0, 0, 'M', '0', '0', '', 'local-icon-gitee', 103, 1, now(), null, null, 'RuoYi-Plus-Soybean 仓库地址') ON CONFLICT (menu_id) DO UPDATE SET update_time = now();
 UPDATE sys_menu SET status = '1' WHERE menu_id IN ('116', '130', '131', '132');
+
+-- changeset seewis:3
+-- comment 仪表盘菜单
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache, menu_type, visible, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark) VALUES (2000, 'route.dashboard', 0, 1, 'dashboard', 'Layout', '', 1, 0, 'M', '0', '0', '', 'mdi:view-dashboard-outline', 103, 1, now(), null, null, '仪表盘目录') ON CONFLICT (menu_id) DO UPDATE SET menu_name = EXCLUDED.menu_name, component = EXCLUDED.component, icon = EXCLUDED.icon, update_time = now();
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache, menu_type, visible, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark) VALUES (2001, 'route.dashboard_workbench', 2000, 1, 'workbench', 'dashboard/workbench/index', '', 1, 0, 'C', '0', '0', 'dashboard:workbench', 'mdi:briefcase-outline', 103, 1, now(), null, null, '工作台') ON CONFLICT (menu_id) DO UPDATE SET menu_name = EXCLUDED.menu_name, component = EXCLUDED.component, perms = EXCLUDED.perms, icon = EXCLUDED.icon, update_time = now();
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, is_cache, menu_type, visible, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark) VALUES (2002, 'route.dashboard_analysis', 2000, 2, 'analysis', 'dashboard/analysis/index', '', 1, 0, 'C', '0', '0', 'dashboard:analysis', 'mdi:chart-line', 103, 1, now(), null, null, '数据分析') ON CONFLICT (menu_id) DO UPDATE SET menu_name = EXCLUDED.menu_name, component = EXCLUDED.component, perms = EXCLUDED.perms, icon = EXCLUDED.icon, update_time = now();
+
+-- changeset seewis:4
+-- comment 调整顶级菜单顺序，预留 1-20 给业务模块
+UPDATE sys_menu SET order_num = 1 WHERE menu_id = 2000;
+UPDATE sys_menu SET order_num = 21 WHERE menu_id = 1;
+UPDATE sys_menu SET order_num = 22 WHERE menu_id = 2;
+UPDATE sys_menu SET order_num = 23 WHERE menu_id = 3;

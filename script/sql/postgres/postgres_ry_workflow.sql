@@ -524,3 +524,6 @@ INSERT INTO sys_dict_data VALUES (57, 10, '加签', 'sign', 'wf_task_status', ''
 INSERT INTO sys_dict_data VALUES (58, 11, '减签', 'sign_off', 'wf_task_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '减签');
 INSERT INTO sys_dict_data VALUES (59, 11, '超时', 'timeout', 'wf_task_status', '', 'danger', 'N', 103, 1, now(), NULL, NULL, '超时');
 
+-- 顶级菜单排序：工作流菜单放到业务模块之后。
+UPDATE sys_menu SET order_num = 24 WHERE menu_id = 11616;
+UPDATE sys_menu SET order_num = 25 WHERE menu_id = 11618;
