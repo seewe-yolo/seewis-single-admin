@@ -98,9 +98,9 @@ services:
     privileged: true
     network_mode: "host"
 
-  ruoyi-server1:
-    image: ruoyi/ruoyi-server:5.6.2
-    container_name: ruoyi-server1
+  seewis-admin1:
+    image: seewis/seewis-admin:5.6.2
+    container_name: seewis-admin1
     environment:
       # 时区上海
       TZ: Asia/Shanghai
@@ -114,9 +114,9 @@ services:
     privileged: true
     network_mode: "host"
 
-  ruoyi-server2:
-    image: ruoyi/ruoyi-server:5.6.2
-    container_name: ruoyi-server2
+  seewis-admin2:
+    image: seewis/seewis-admin:5.6.2
+    container_name: seewis-admin2
     environment:
       # 时区上海
       TZ: Asia/Shanghai
@@ -130,9 +130,9 @@ services:
     privileged: true
     network_mode: "host"
 
-  ruoyi-monitor-admin:
-    image: ruoyi/ruoyi-monitor-admin:5.6.2
-    container_name: ruoyi-monitor-admin
+  seewis-monitor-admin:
+    image: seewis/seewis-monitor-admin:5.6.2
+    container_name: seewis-monitor-admin
     environment:
       # 时区上海
       TZ: Asia/Shanghai
@@ -142,9 +142,9 @@ services:
     privileged: true
     network_mode: "host"
 
-  ruoyi-snailjob-server:
-    image: ruoyi/ruoyi-snailjob-server:5.6.2
-    container_name: ruoyi-snailjob-server
+  seewis-snailjob-server:
+    image: seewis/seewis-snailjob-server:5.6.2
+    container_name: seewis-snailjob-server
     environment:
       # 时区上海
       TZ: Asia/Shanghai

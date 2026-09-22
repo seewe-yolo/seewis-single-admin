@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.dromara</groupId>
-    <artifactId>ruoyi-vue-plus</artifactId>
+    <artifactId>seewis-single-admin</artifactId>
     <version>${revision}</version>
 
-    <name>RuoYi-Vue-Plus</name>
+    <name>seewis-single-admin</name>
     <url>https://gitee.com/dromara/RuoYi-Vue-Plus</url>
-    <description>Dromara RuoYi-Vue-Plus管理系统</description>
+    <description>seewis-single-admin 管理系统</description>
 
     <properties>
         <revision>5.6.2</revision>
@@ -121,7 +121,7 @@
             <!-- common 的依赖配置-->
             <dependency>
                 <groupId>org.dromara</groupId>
-                <artifactId>ruoyi-common-bom</artifactId>
+                <artifactId>seewis-common-bom</artifactId>
                 <version>${revision}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -328,32 +328,32 @@
 
             <dependency>
                 <groupId>org.dromara</groupId>
-                <artifactId>ruoyi-system</artifactId>
+                <artifactId>seewis-system</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.dromara</groupId>
-                <artifactId>ruoyi-job</artifactId>
+                <artifactId>seewis-job</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.dromara</groupId>
-                <artifactId>ruoyi-generator</artifactId>
+                <artifactId>seewis-generator</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.dromara</groupId>
-                <artifactId>ruoyi-demo</artifactId>
+                <artifactId>seewis-demo</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <!--  工作流模块  -->
             <dependency>
                 <groupId>org.dromara</groupId>
-                <artifactId>ruoyi-workflow</artifactId>
+                <artifactId>seewis-workflow</artifactId>
                 <version>${revision}</version>
             </dependency>
 
@@ -361,10 +361,10 @@
     </dependencyManagement>
 
     <modules>
-        <module>ruoyi-admin</module>
-        <module>ruoyi-common</module>
-        <module>ruoyi-extend</module>
-        <module>ruoyi-modules</module>
+        <module>seewis-admin</module>
+        <module>seewis-common</module>
+        <module>seewis-extend</module>
+        <module>seewis-modules</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>seewis-single-admin</artifactId>
+        <groupId>org.dromara</groupId>
+        <version>${revision}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <modules>
+        <module>seewis-common-bom</module>
+        <module>seewis-common-social</module>
+        <module>seewis-common-core</module>
+        <module>seewis-common-doc</module>
+        <module>seewis-common-excel</module>
+        <module>seewis-common-idempotent</module>
+        <module>seewis-common-job</module>
+        <module>seewis-common-log</module>
+        <module>seewis-common-mail</module>
+        <module>seewis-common-mybatis</module>
+        <module>seewis-common-oss</module>
+        <module>seewis-common-ratelimiter</module>
+        <module>seewis-common-redis</module>
+        <module>seewis-common-satoken</module>
+        <module>seewis-common-security</module>
+        <module>seewis-common-sms</module>
+        <module>seewis-common-web</module>
+        <module>seewis-common-translation</module>
+        <module>seewis-common-sensitive</module>
+        <module>seewis-common-json</module>
+        <module>seewis-common-encrypt</module>
+        <module>seewis-common-websocket</module>
+        <module>seewis-common-sse</module>
+    </modules>
+
+    <artifactId>seewis-common</artifactId>
+    <packaging>pom</packaging>
+
+    <description>
+        common 通用模块
+    </description>
+
+</project>
