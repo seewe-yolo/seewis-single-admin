@@ -430,3 +430,7 @@ UPDATE `sys_menu` SET `order_num` = 1 WHERE `menu_id` = 2000;
 UPDATE `sys_menu` SET `order_num` = 21 WHERE `menu_id` = 1;
 UPDATE `sys_menu` SET `order_num` = 22 WHERE `menu_id` = 2;
 UPDATE `sys_menu` SET `order_num` = 23 WHERE `menu_id` = 3;
+
+-- changeset seewis:5
+-- comment 启用小程序登录客户端授权
+UPDATE `sys_client` SET `grant_type` = 'password,sms,social,xcx' WHERE `client_id` = 'app';

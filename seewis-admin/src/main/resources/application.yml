@@ -30,6 +30,12 @@ captcha:
   # 字符验证码长度
   charLength: 4
 
+# 微信小程序一键登录配置，AppSecret 仅从环境变量读取
+wechat:
+  miniapp:
+    app-id: ${WECHAT_MINIAPP_APP_ID:}
+    app-secret: ${WECHAT_MINIAPP_APP_SECRET:}
+
 # 日志配置
 logging:
   level:

@@ -25,4 +25,10 @@ public class XcxLoginBody extends LoginBody {
     @NotBlank(message = "{xcx.code.not.blank}")
     private String xcxCode;
 
+    /**
+     * 微信手机号授权 code，由 wx.getPhoneNumber 获取。
+     */
+    @NotBlank(message = "微信手机号授权 code 不能为空")
+    private String phoneCode;
+
 }
