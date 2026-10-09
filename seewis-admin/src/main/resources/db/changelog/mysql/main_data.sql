@@ -432,5 +432,15 @@ UPDATE `sys_menu` SET `order_num` = 22 WHERE `menu_id` = 2;
 UPDATE `sys_menu` SET `order_num` = 23 WHERE `menu_id` = 3;
 
 -- changeset seewis:5
--- comment 启用小程序登录客户端授权
-UPDATE `sys_client` SET `grant_type` = 'password,sms,social,xcx' WHERE `client_id` = 'app';
+-- comment 修复小程序客户端授权配置
+INSERT INTO `sys_client` (
+    `id`, `client_id`, `client_key`, `client_secret`, `grant_type`, `device_type`,
+    `active_timeout`, `timeout`, `status`, `del_flag`, `create_dept`, `create_by`,
+    `create_time`, `update_by`, `update_time`
+)
+VALUES (3, 'f4b7e0a29d6c4815b3e7f1d2a9c60e83', 'seewis-miniapp', REPLACE(UUID(), '-', ''),
+        'password,xcx', 'xcx', 1800, 604800, '0', '0', 103, 1, SYSDATE(), 1, SYSDATE());
+
+UPDATE `sys_client`
+SET `grant_type` = 'password,sms,social,xcx'
+WHERE `client_key` = 'app';
