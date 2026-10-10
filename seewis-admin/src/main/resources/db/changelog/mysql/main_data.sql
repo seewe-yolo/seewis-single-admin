@@ -334,6 +334,10 @@ insert into sys_config values(5, '账号自助-是否开启用户注册功能', 
 
 insert into sys_config values(11, 'OSS预览列表资源开关',         'sys.oss.previewListResource',   'true',          'Y', 103, 1, sysdate(), null, null, 'true:开启, false:关闭');
 
+insert into sys_config values(12, '微信小程序-AppID', 'wechat.miniapp.app-id', '', 'Y', 103, 1, sysdate(), null, null, '留空时读取 WECHAT_MINIAPP_APP_ID 环境变量或登录请求中的 appid');
+
+insert into sys_config values(13, '微信小程序-AppSecret', 'wechat.miniapp.app-secret', '', 'Y', 103, 1, sysdate(), null, null, '留空时读取 WECHAT_MINIAPP_APP_SECRET 环境变量');
+
 
 
 insert into sys_oss_config values (1, 'minio',  'ruoyi',            'ruoyi123',        'ruoyi',             '', '127.0.0.1:9000',                '','N', '',             '1' ,'0', '', 103, 1, sysdate(), 1, sysdate(), null);

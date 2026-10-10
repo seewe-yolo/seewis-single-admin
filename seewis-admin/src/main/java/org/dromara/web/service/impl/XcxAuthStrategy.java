@@ -24,6 +24,7 @@ import org.dromara.system.domain.vo.SysClientVo;
 import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.domain.vo.SysSocialVo;
 import org.dromara.system.mapper.SysUserMapper;
+import org.dromara.system.service.ISysConfigService;
 import org.dromara.system.service.ISysSocialService;
 import org.dromara.system.service.ISysUserService;
 import org.dromara.web.domain.vo.LoginVo;
@@ -58,6 +59,7 @@ public class XcxAuthStrategy implements IAuthStrategy {
     private final SysLoginService loginService;
     private final SysUserMapper userMapper;
     private final ISysSocialService socialService;
+    private final ISysConfigService configService;
     private final ISysUserService userService;
     private final RestClient restClient = RestClient.create();
 
@@ -65,7 +67,7 @@ public class XcxAuthStrategy implements IAuthStrategy {
     private String configuredAppId;
 
     @Value("${wechat.miniapp.app-secret:}")
-    private String appSecret;
+    private String configuredAppSecret;
 
     @Override
     public LoginVo login(String body, SysClientVo client) {
@@ -73,7 +75,10 @@ public class XcxAuthStrategy implements IAuthStrategy {
         ValidatorUtils.validate(loginBody);
         // xcxCode 为 小程序调用 wx.login 授权后获取
         String xcxCode = loginBody.getXcxCode();
-        String appid = StringUtils.blankToDefault(configuredAppId, loginBody.getAppid());
+        String appid = StringUtils.blankToDefault(configService.selectConfigByKey("wechat.miniapp.app-id"),
+            StringUtils.blankToDefault(configuredAppId, loginBody.getAppid()));
+        String appSecret = StringUtils.blankToDefault(configService.selectConfigByKey("wechat.miniapp.app-secret"),
+            configuredAppSecret);
         if (StringUtils.isBlank(appid) || StringUtils.isBlank(appSecret)) {
             throw new ServiceException("微信小程序 AppID 或 AppSecret 未配置");
         }
@@ -81,8 +86,8 @@ public class XcxAuthStrategy implements IAuthStrategy {
             throw new ServiceException("微信小程序 AppID 不匹配");
         }
 
-        WechatSession session = requestSession(appid, xcxCode);
-        String phoneNumber = requestPhoneNumber(getAccessToken(appid), loginBody.getPhoneCode());
+        WechatSession session = requestSession(appid, xcxCode, appSecret);
+        String phoneNumber = requestPhoneNumber(getAccessToken(appid, appSecret), loginBody.getPhoneCode());
         SysUserVo user = loadUser(session.openid(), phoneNumber, session.unionid());
         // 此处可根据登录用户的数据不同 自行创建 loginUser 属性不够用继承扩展就行了
         XcxLoginUser loginUser = new XcxLoginUser();
@@ -175,7 +180,7 @@ public class XcxAuthStrategy implements IAuthStrategy {
         socialService.insertByBo(binding);
     }
 
-    private WechatSession requestSession(String appid, String code) {
+    private WechatSession requestSession(String appid, String code, String appSecret) {
         String response = restClient.get().uri(uriBuilder -> uriBuilder
             .scheme("https")
             .host("api.weixin.qq.com")
@@ -193,7 +198,7 @@ public class XcxAuthStrategy implements IAuthStrategy {
         return session;
     }
 
-    private String getAccessToken(String appid) {
+    private String getAccessToken(String appid, String appSecret) {
         String cacheKey = ACCESS_TOKEN_CACHE_KEY_PREFIX + appid;
         String cached = RedisUtils.getCacheObject(cacheKey);
         if (StringUtils.isNotBlank(cached)) {
