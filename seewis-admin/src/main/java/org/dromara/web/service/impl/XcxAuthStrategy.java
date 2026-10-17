@@ -33,12 +33,15 @@ import org.dromara.web.service.SysLoginService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -224,15 +227,26 @@ public class XcxAuthStrategy implements IAuthStrategy {
     }
 
     private String requestPhoneNumber(String accessToken, String phoneCode) {
-        String response = restClient.post().uri(uriBuilder -> uriBuilder
-                .scheme("https")
-                .host("api.weixin.qq.com")
-                .path("/wxa/business/getuserphonenumber")
-                .queryParam("access_token", accessToken)
-                .build())
-            .contentType(MediaType.APPLICATION_JSON)
-            .body(Map.of("code", phoneCode))
-            .retrieve().body(String.class);
+        byte[] requestBody = JsonUtils.toJsonString(Map.of("code", phoneCode)).getBytes(StandardCharsets.UTF_8);
+        String response;
+        try {
+            response = restClient.post().uri(uriBuilder -> uriBuilder
+                    .scheme("https")
+                    .host("api.weixin.qq.com")
+                    .path("/wxa/business/getuserphonenumber")
+                    .queryParam("access_token", accessToken)
+                    .build())
+                .contentType(MediaType.APPLICATION_JSON)
+                .contentLength(requestBody.length)
+                .body(requestBody)
+                .retrieve().body(String.class);
+        } catch (RestClientResponseException e) {
+            log.warn("微信手机号接口请求失败，HTTP状态：{}", e.getStatusCode().value());
+            throw new ServiceException("微信手机号接口请求失败（HTTP " + e.getStatusCode().value() + "），请稍后重新授权");
+        } catch (RestClientException e) {
+            log.warn("微信手机号接口请求失败，网络或连接异常");
+            throw new ServiceException("微信手机号接口请求失败，请稍后重新授权");
+        }
         WechatPhoneResponse phone = JsonUtils.parseObject(response, WechatPhoneResponse.class);
         checkWechatResponse(phone.errcode(), phone.errmsg());
         if (phone.phone_info() == null || StringUtils.isBlank(phone.phone_info().phoneNumber())) {
